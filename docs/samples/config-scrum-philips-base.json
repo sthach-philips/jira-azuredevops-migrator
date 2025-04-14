@@ -1,0 +1,603 @@
+{
+  "attachment-folder": "attachments",
+  "base-area-path": "ECG%20Solutions/Rev Cycle Mgmt",
+  "base-iteration-path": "ECG%20Solutions/2025",
+  "batch-size": 20,
+  "download-options": 7,
+  "epic-link-field": "Epic Link",
+  "field-map": {
+    "field": [
+      {
+        "source": "key",
+        "target": "Custom.LegacyID",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "TFSWorkItemID",
+        "target": "Custom.TFSWorkItemID",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Planned / Unplanned?",
+        "source-type": "name",
+        "target": "Custom.IsUnplanned",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "Business Owner(s)",
+        "source-type": "name",
+        "target": "Custom.BusinessOwners",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Team owning the change",
+        "source-type": "name",
+        "target": "Custom.ChangeOwners",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Customer/User Impact during & after deployment",
+        "source-type": "name",
+        "target": "Custom.CustomerImpact",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "DB Changes",
+        "source-type": "name",
+        "target": "Custom.DbChanges",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Dependencies",
+        "source-type": "name",
+        "target": "Custom.Dependencies",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Summary of Deployment Considerations",
+        "source-type": "name",
+        "target": "Custom.DeploymentConsideration",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Production Deployment Instructions",
+        "source-type": "name",
+        "target": "Custom.DeploymentInstructions",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Release Documentation",
+        "source-type": "name",
+        "target": "Custom.Documentation",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Teams involved in implementing the change",
+        "source-type": "name",
+        "target": "Custom.ImplementationOwners",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "Observability",
+        "source-type": "name",
+        "target": "Custom.Observability",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Post release activities",
+        "source-type": "name",
+        "target": "Custom.PostActivity",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Priority",
+        "source-type": "name",
+        "target": "Custom.Priority",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Risk Analysis",
+        "source-type": "name",
+        "target": "Custom.Risk Analysis",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Roll Back Instructions",
+        "source-type": "name",
+        "target": "Custom.RollBackInstructions",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Security Summary",
+        "source-type": "name",
+        "target": "Custom.SecuritySummary",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Summary of Change/Release",
+        "source-type": "name",
+        "target": "Custom.SummaryOfChange",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Target Sprint",
+        "source-type": "name",
+        "target": "Custom.TargetSprint",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Verification and Validation performed & accepted",
+        "source-type": "name",
+        "target": "Custom.VerificationValidation",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "10219",
+        "source-type": "id",
+        "target": "Custom.Common.Design",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Time Spent Dev",
+        "source-type": "name",
+        "target": "Custom.Common.Dev.Effort",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "assignee",
+        "target": "Custom.Common.Dev.User",
+        "mapper": "MapUser"
+      },
+      {
+        "source": "Time Spent QA",
+        "source-type": "name",
+        "target": "Custom.Common.SQA.Effort",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "QA Tester",
+        "target": "Custom.Common.SQA.User",
+        "mapper": "MapUser"
+      },
+
+      {
+        "source": "10355",
+        "source-type": "id",
+        "target": "Custom.Common.Environment",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "Products / Services Impacted",
+        "source-type": "name",
+        "target": "Custom.Common.ProductServiceImpact",
+        "mapper": "MapRendered"
+      },
+
+
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.Effort",
+        "for": "Epic,Feature"
+      },
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.StoryPoints",
+        "for": "User Story"
+      },
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.PlannedEffort",
+        "for": "Feature"
+      },
+
+      {
+        "source": "timeestimate",
+        "target": "Microsoft.VSTS.Scheduling.RemainingWork",
+        "mapper": "MapRemainingWork",
+        "for": "Bug,Task"
+      },
+
+      {
+        "source": "description",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.TCM.ReproSteps",
+        "for": "Bug",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "Acceptance Criteria",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Common.AcceptanceCriteria",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "assignee",
+        "target": "System.AssignedTo",
+        "mapper": "MapUser"
+      },
+      {
+        "source": "repoorter",
+        "target": "System.CreatedBy",
+        "mapper": "MapUser"
+      },
+      {
+        "source": "comment",
+        "target": "System.History",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "description",
+        "source-type": "name",
+        "target": "System.Description",
+        "mapper": "MapRendered"
+      },
+
+      {
+        "source": "labels",
+        "target": "System.Tags",
+        "mapper": "MapTags"
+      },
+      {
+        "source": "Sprint",
+        "source-type": "name",
+        "target": "System.IterationPath",
+        "mapper": "MapSprint"
+      },
+      {
+        "source": "summary",
+        "target": "System.Title",
+        "mapper": "MapTitle"
+      },
+
+      {
+        "source": "priority",
+        "target": "Microsoft.VSTS.Common.Priority",
+        "mapping": {
+          "values": [
+            {
+              "source": "Blocker",
+              "target": "1"
+            },
+            {
+              "source": "Critical",
+              "target": "1"
+            },
+            {
+              "source": "Highest",
+              "target": "1"
+            },
+            {
+              "source": "High",
+              "target": "2"
+            },
+            {
+              "source": "Major",
+              "target": "2"
+            },
+            {
+              "source": "Medium",
+              "target": "3"
+            },
+            {
+              "source": "Low",
+              "target": "4"
+            },
+            {
+              "source": "Lowest",
+              "target": "4"
+            },
+            {
+              "source": "Minor",
+              "target": "4"
+            },
+            {
+              "source": "Trivial",
+              "target": "4"
+            }
+          ]
+        }
+      },
+
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Task",
+        "mapping": {
+          "values": [
+            {
+              "source": "Done",
+              "target": "Closed"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "OPEN",
+              "target": "New"
+            },
+            {
+              "source": "Ready",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "New"
+            },
+            {
+              "source": "Ready for UAT Testing",
+              "target": "Active"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Bug",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            },
+            {
+              "source": "Completed",
+              "target": "Closed"
+            },
+            {
+              "source": "Assigned",
+              "target": "Active"
+            },
+            {
+              "source": "Reopened",
+              "target": "Active"
+            },
+            {
+              "source": "OPEN",
+              "target": "New"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Epic",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            },
+            {
+              "source": "Completed",
+              "target": "Resolved"
+            },
+            {
+              "source": "Under Review",
+              "target": "New"
+            },
+            {
+              "source": "Awaiting Priority",
+              "target": "New"
+            },
+            {
+              "source": "Verification",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Review",
+              "target": "New"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "Architecture",
+              "target": "New"
+            },
+            {
+              "source": "Defined",
+              "target": "New"
+            },
+            {
+              "source": "ARCHITECTURE REFINEMENT COMPLETE",
+              "target": "New"
+            },
+            {
+              "source": "Team Refinement Ready",
+              "target": "New"
+            },
+            {
+              "source": "In Review",
+              "target": "New"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Feature",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            },
+            {
+              "source": "Completed",
+              "target": "Closed"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "READY",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "New"
+            },
+            {
+              "source": "Ready for QA",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Dev2",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Peer Review",
+              "target": "Active"
+            },
+            {
+              "source": "In Peer Review",
+              "target": "Active"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "User Story",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            },
+            {
+              "source": "Completed",
+              "target": "Closed"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Review",
+              "target": "Active"
+            },
+            {
+              "source": "In Review",
+              "target": "Active"
+            },
+            {
+              "source": "Research",
+              "target": "New"
+            },
+            {
+              "source": "Architecture",
+              "target": "New"
+            },
+            {
+              "source": "Defined",
+              "target": "New"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "ignore-empty-revisions": false,
+  "ignore-failed-links": true,
+  "include-jira-css-styles": false,
+  "include-link-comments": false,
+  "link-map": {
+    "description": "Name-value pairs of work item link types to map in the migration.",
+    "link": [
+
+    ]
+  },
+  "log-level": "Info",
+  "process-template": "Scrum",
+  "query": "Key IN ('MID-17555', 'MID-10846')",
+  "sleep-time-between-revision-import-milliseconds": 0,
+  "source-project": "SFIN",
+  "sprint-field": "Sprint",
+  "suppress-notifications": false,
+  "target-project": "ECG Solutions",
+  "type-map": {
+    "type": [
+
+    ]
+  },
+  "user-mapping-file": "user_emails.txt",
+  "using-jira-cloud": true,
+  "workspace": "C:\\repos\\jira-azuredevops-migrator\\exec\\workspace\\"
+}

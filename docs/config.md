@@ -44,7 +44,9 @@ The migration configuration file is defined in a json file with the properties d
 |**type-map**|True|json|List of the work item **types** you want to migrate from Jira to Azure DevOps/TFS.|
 |**field-map**|True|json|List of **fields** you want to migrate from a Jira item to a Azure DevOps/TFS work item.|
 |**repository-map**|True|json|List of **repositories** you want to map from a bitbucket Azure DevOps/TFS. This enables migration of commit links, but only if the **include-development-links** property has been set to **true** and the git repositories have already been migrated from BitBucket to Azure DevOps.|
-
+   
+> [!IMPORTANT]  
+> The **base-area-path** and **base-iteration-path** values must be URL encoded or percent encoded if your path names contain spaces.
 ## Download options
 
 This option allows the tool to download related issues to cover cases where these are not included in the section query (like a parent issue).

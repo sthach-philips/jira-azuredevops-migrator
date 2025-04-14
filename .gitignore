@@ -337,4 +337,32 @@ About
 **/.ionide
 
 # Testing scripts
-*.ps1
+/exec/workspace/attachments
+/exec/ApplicationInsights.config
+/exec/Atlassian.Jira.dll
+/exec/config-scrum-bg.json
+/exec/jira-export.dll
+/exec/jira-export.exe
+/exec/jira-export.runtimeconfig.json
+/exec/Microsoft.AI.Agent.Intercept.dll
+/exec/Microsoft.AI.DependencyCollector.dll
+/exec/Microsoft.ApplicationInsights.dll
+/exec/Microsoft.Extensions.CommandLineUtils.dll
+/exec/Microsoft.TeamFoundation.Common.dll
+/exec/Microsoft.TeamFoundation.Core.WebApi.dll
+/exec/Microsoft.TeamFoundation.SourceControl.WebApi.dll
+/exec/Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll
+/exec/Microsoft.VisualStudio.Services.Common.dll
+/exec/Microsoft.VisualStudio.Services.WebApi.dll
+/exec/Migration.Common.dll
+/exec/Migration.Common.Log.dll
+/exec/Migration.WIContract.dll
+/exec/Newtonsoft.Json.dll
+/exec/RestSharp.dll
+/exec/Semver.dll
+/exec/System.Configuration.ConfigurationManager.dll
+/exec/System.Diagnostics.DiagnosticSource.dll
+/exec/System.Net.Http.Formatting.dll
+/exec/wi-import.dll
+/exec/wi-import.exe
+/exec/wi-import.runtimeconfig.json

@@ -1,0 +1,460 @@
+{
+  "source-project": "GZ ",
+  "target-project": "test_PCAWMigration",
+  "using-jira-cloud": true,
+  "query": "key=GZ-15538",
+  "workspace": "C:\\Temp\\JiraExport\\",
+  "epic-link-field": "Epic Link",
+  "sprint-field": "Sprint",
+  "download-options": 7,
+  "batch-size": 20,
+  "log-level": "Info",
+  "attachment-folder": "Attachments",
+  "user-mapping-file": "users.txt",
+  "base-area-path": "Migrated",
+  "base-iteration-path": "Migrated",
+  "ignore-failed-links": true,
+  "include-link-comments": false,
+  "include-jira-css-styles": false,
+  "ignore-empty-revisions": false,
+  "suppress-notifications": false,
+  "sleep-time-between-revision-import-milliseconds": 0,
+  "process-template": "Scrum",
+  "link-map": {
+    "link": [
+      {
+        "source": "Epic",
+        "target": "System.LinkTypes.Hierarchy-Reverse"
+      },
+      {
+        "source": "Parent",
+        "target": "System.LinkTypes.Hierarchy-Reverse"
+      },
+      {
+        "source": "Child",
+        "target": "System.LinkTypes.Hierarchy-Forward"
+      },
+      {
+        "source": "Relates",
+        "target": "System.LinkTypes.Related"
+      },
+      {
+        "source": "relates to",
+        "target": "System.LinkTypes.Related"
+      },
+      {
+        "source": "duplicates",
+        "target": "System.LinkTypes.Duplicate-Forward"
+      },
+      {
+        "source": "is duplicate by",
+        "target": "System.LinkTypes.Duplicate-Reverse"
+      },
+      {
+        "source": "clones",
+        "target": "System.LinkTypes.Duplicate-Forward"
+      },
+      {
+        "source": "is cloned by",
+        "target": "System.LinkTypes.Duplicate-Reverse"
+      }
+    ]
+  },
+  "type-map": {
+    "type": [
+      {
+        "source": "Epic",
+        "target": "Epic"
+      },
+      {
+        "source": "Story",
+        "target": "User Story"
+      },
+      {
+        "source": "Bug",
+        "target": "Bug"
+      },
+      {
+        "source": "Task",
+        "target": "Task"
+      },
+      {
+        "source": "Sub-task",
+        "target": "Task"
+      },
+      {
+        "source": "Initiative",
+        "target": "Feature"
+      }
+    ]
+  },
+  "field-map": {
+    "field": [
+      {
+        "source": "summary",
+        "target": "System.Title",
+        "mapper": "MapTitle"
+      },
+      {
+        "source": "assignee",
+        "target": "System.AssignedTo",
+        "mapper": "MapUser"
+      },
+      {
+        "source": "description",
+        "target": "System.Description",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "priority",
+        "target": "Microsoft.VSTS.Common.Priority",
+        "mapping": {
+          "values": [
+            {
+              "source": "Blocker",
+              "target": "1"
+            },
+            {
+              "source": "Critical",
+              "target": "1"
+            },
+            {
+              "source": "Highest",
+              "target": "1"
+            },
+            {
+              "source": "Major",
+              "target": "2"
+            },
+            {
+              "source": "High",
+              "target": "2"
+            },
+            {
+              "source": "Medium",
+              "target": "3"
+            },
+            {
+              "source": "Low",
+              "target": "4"
+            },
+            {
+              "source": "Lowest",
+              "target": "4"
+            },
+            {
+              "source": "Minor",
+              "target": "4"
+            },
+            {
+              "source": "Trivial",
+              "target": "4"
+            }
+          ]
+        }
+      },
+      {
+        "source": "Sprint",
+        "source-type": "name",
+        "target": "System.IterationPath",
+        "mapper": "MapSprint"
+      },
+      {
+        "source": "labels",
+        "target": "System.Tags",
+        "mapper": "MapTags"
+      },
+      {
+        "source": "comment",
+        "target": "System.History",
+        "mapper": "MapRendered"
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Task",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "Ready for UAT Testing",
+              "target": "New"
+            },
+            {
+              "source": "OPEN",
+              "target": "New"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "New"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Bug",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "OPEN",
+              "target": "New"
+            },
+            {
+              "source": "Assigned",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Dev2",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for QA",
+              "target": "Active"
+            },
+            {
+              "source": "In QA",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "Active"
+            },
+            {
+              "source": "Reopened",
+              "target": "Active"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Groomed",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Peer Review",
+              "target": "Active"
+            },
+            {
+              "source": "In Peer Review",
+              "target": "Active"
+            },
+            {
+              "source": "Completed",
+              "target": "Closed"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "User Story",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "New"
+            },
+            {
+              "source": "Ready for QA",
+              "target": "Active"
+            },
+            {
+              "source": "In QA",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Dev2",
+              "target": "Active"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Ready for Peer Review",
+              "target": "Active"
+            },
+            {
+              "source": "In Peer Review",
+              "target": "Active"
+            },
+            {
+              "source": "Completed",
+              "target": "Closed"
+            },
+            {
+              "source": "Ready for Review",
+              "target": "Active"
+            },
+            {
+              "source": "In Review",
+              "target": "Active"
+            },
+            {
+              "source": "Research",
+              "target": "New"
+            },
+            {
+              "source": "Architecture",
+              "target": "New"
+            },
+            {
+              "source": "Defined",
+              "target": "New"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            }
+          ]
+        }
+      },
+      {
+        "source": "status",
+        "target": "System.State",
+        "for": "Epic",
+        "mapping": {
+          "values": [
+            {
+              "source": "New",
+              "target": "New"
+            },
+            {
+              "source": "Under Review",
+              "target": "New"
+            },
+            {
+              "source": "Awaiting Priority",
+              "target": "New"
+            },
+            {
+              "source": "Verification",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Review",
+              "target": "New"
+            },
+            {
+              "source": "In Review",
+              "target": "New"
+            },
+            {
+              "source": "Research",
+              "target": "New"
+            },
+            {
+              "source": "Architecture",
+              "target": "New"
+            },
+            {
+              "source": "Defined",
+              "target": "New"
+            },
+            {
+              "source": "Groomed",
+              "target": "New"
+            },
+            {
+              "source": "Ready for Dev",
+              "target": "New"
+            },
+            {
+              "source": "In Progress",
+              "target": "Active"
+            },
+            {
+              "source": "In_Progress",
+              "target": "Active"
+            },
+            {
+              "source": "Completed",
+              "target": "Resolved"
+            },
+            {
+              "source": "Done",
+              "target": "Closed"
+            }
+          ]
+        }
+      },
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.Effort",
+        "for": "Epic,Feature"
+      },
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.StoryPoints",
+        "for": "User Story"
+      },
+      {
+        "source": "Story Points",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Scheduling.PlannedEffort",
+        "for": "Feature"
+      },
+      {
+        "source": "timeestimate",
+        "target": "Microsoft.VSTS.Scheduling.RemainingWork",
+        "mapper": "MapRemainingWork",
+        "for": "Bug,Task"
+      },
+      {
+        "source": "Acceptance Criteria",
+        "source-type": "name",
+        "target": "Microsoft.VSTS.Common.AcceptanceCriteria",
+        "mapper": "MapRendered"
+      }
+    ]
+  }
+}
