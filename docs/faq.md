@@ -534,6 +534,20 @@ Example `config.json`:
   "changeddate-bump-ms": 5,
 ```
 
+### Disable the built-in error handling for the error message VS402625
+
+If your Importer gets stuck in a loop where it keeps outputting the following line over and over again:
+
+```txt
+[W][11:15:29] Received response while updating Work Item: VS402625: Dates must be increasing with each revision.. Bumped Changed Date by 2ms and trying again... New ChangedDate: 3/31/2016 3:21:38 PM, ms: 172
+```
+
+You can revert to throwing the error message instead of raising a warning. This may cause the tool to migrate incomplete issue data, but the execution will continue. in order to do this, set the value of **changeddate-bump-ms** to 0 in you config.json, for example:
+
+```json
+  "changeddate-bump-ms": 0,
+```
+
 ## 22. Sprint names are corrupted. ADO Iteration paths are named "[ synced = false  ]"
 
 The issue is usually that a custom field has been defined in Jira which is also named "Sprint", and the tool is picking up this field instead of the default Srpint field.
