@@ -37,14 +37,18 @@ steps:
   inputs:
     restoreSolution: '**\*.sln'
 
-- task: SonarCloudPrepare@1
-  displayName: 'Prepare analysis on SonarCloud'
-  inputs:
-    SonarCloud: SonarCloud
-    organization: solidify
-    projectKey: 'jira-azuredevops-migrator'
-    projectName: 'jira-azuredevops-migrator'
-    projectVersion: '$(Build.BuildNumber)'
+# 2025-08-26
+# Alexander Andersson
+# Disabled SonarCloud build tasks due to expired token. The SonarCloud Service Connection does currently not work. 
+
+#- task: SonarCloudPrepare@1
+#  displayName: 'Prepare analysis on SonarCloud'
+#  inputs:
+#    SonarCloud: SonarCloud
+#    organization: solidify
+#    projectKey: 'jira-azuredevops-migrator'
+#    projectName: 'jira-azuredevops-migrator'
+#    projectVersion: '$(Build.BuildNumber)'
     
 - task: VSBuild@1
   displayName: 'Build solution WorkItemMigrator'
@@ -53,13 +57,13 @@ steps:
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
-- task: SonarCloudAnalyze@1
-  displayName: 'Run Code Analysis'
+#- task: SonarCloudAnalyze@1
+#  displayName: 'Run Code Analysis'
 
-- task: SonarCloudPublish@1
-  displayName: 'Publish Quality Gate Result'
-  inputs:
-    pollingTimeoutSec: '300'
+#- task: SonarCloudPublish@1
+#  displayName: 'Publish Quality Gate Result'
+#  inputs:
+#    pollingTimeoutSec: '300'
 
 
 - task: DotNetCoreCLI@2
