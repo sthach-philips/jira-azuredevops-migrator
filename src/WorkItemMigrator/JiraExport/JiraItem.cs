@@ -527,17 +527,17 @@ namespace JiraExport
                 if (value != null)
                 {
                     fields[name] = value;
+                }
 
-                    if (renderedFields.TryGetValue(name, out JToken rendered))
+                if (renderedFields.TryGetValue(name, out JToken rendered))
+                {
+                    if (rendered.Type == JTokenType.String)
                     {
-                        if (rendered.Type == JTokenType.String)
-                        {
-                            fields[name + "$Rendered"] = rendered.Value<string>();
-                        }
-                        else
-                        {
-                            Logger.Log(LogLevel.Debug, $"Rendered field {name} contains unparsable type {rendered.Type.ToString()}, using text");
-                        }
+                        fields[name + "$Rendered"] = rendered.Value<string>();
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Debug, $"Rendered field {name} contains unparsable type {rendered.Type.ToString()}, using text");
                     }
                 }
             }

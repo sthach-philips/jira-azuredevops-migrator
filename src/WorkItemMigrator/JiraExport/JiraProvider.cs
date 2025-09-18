@@ -475,9 +475,8 @@ namespace JiraExport
         {
             try
             {
-                // TODO: This api still uses v2, requires additional changes due to the inclusion of ADF https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/
                 var response =
-                    _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/2/issue/{key}?expand=renderedFields").Result;
+                    _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/issue/{key}?expand=renderedFields").Result;
 
                 var remoteItem = (JObject)response;
                 return remoteItem;
