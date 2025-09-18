@@ -89,6 +89,9 @@ namespace Common.Config
 
         [JsonProperty(PropertyName = "suppress-notifications")]
         public bool SuppressNotifications { get; set; } = false;
-        
+
+        [JsonProperty(PropertyName = "jira-api-version")]
+        public int JiraApiVersion { get; set; } = 3;
+
     }
 }
