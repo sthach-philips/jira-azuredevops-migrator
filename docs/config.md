@@ -21,6 +21,7 @@ The migration configuration file is defined in a json file with the properties d
 |**target-project**|True|string|Name of the project to migrate to.|
 |**query**|True|string|Name of the JQL query to use for identifying work items to migrate.|
 |**using-jira-cloud**|False|boolean|Set to False if connected to Jira Server instance, by default it is True|
+|**jira-api-version**|False|integer|Version of the Jira API to use. Must be either **2** or **3**. Default: 3.|
 |**workspace**|True|string|Location where logs and export data are saved on disk.|
 |**epic-link-field**|False|string|Jira name of epic link field. Default = "Epic Link". **Note:** requires customization per account and sometimes project|
 |**sprint-field**|False|string|Jira name of sprint field. Default = "Sprint". **Note:** requires customization per account and sometimes project|
