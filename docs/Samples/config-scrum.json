@@ -3,6 +3,7 @@
   "target-project": "TargetProject",
   "query": "project=ProjectName ORDER BY Rank ASC",
   "using-jira-cloud": true,
+  "jira-api-version": 3,
   "workspace": "C:\\Temp\\JiraExport\\",
   "epic-link-field": "Epic Link",
   "sprint-field": "Sprint",

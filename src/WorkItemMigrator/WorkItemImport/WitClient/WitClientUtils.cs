@@ -744,12 +744,14 @@ namespace WorkItemImport
             {
                 string fileName = att.FilePath.Split('\\').Last() ?? string.Empty;
                 string encodedFileName = EncodeFileNameUsingJiraStandard(fileName);
-                string restApiUrlOption = "/rest/api/3/attachment/content/" + att.AttOriginId;
+                string restApiUrlOptionV2 = "/rest/api/2/attachment/content/" + att.AttOriginId;
+                string restApiUrlOptionV3 = "/rest/api/3/attachment/content/" + att.AttOriginId;
                 if (
                     textField.Contains(fileName)
                     || textField.IndexOf(encodedFileName, StringComparison.OrdinalIgnoreCase) >= 0
                     || textField.Contains("_thumb_" + att.AttOriginId)
-                    || textField.Contains(restApiUrlOption)
+                    || textField.Contains(restApiUrlOptionV2)
+                    || textField.Contains(restApiUrlOptionV3)
                 )
                 {
                     var tfsAtt = IdentifyAttachment(att, wi, isAttachmentMigratedDelegate);

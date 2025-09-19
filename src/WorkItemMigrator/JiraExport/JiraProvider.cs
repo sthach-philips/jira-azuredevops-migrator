@@ -1,5 +1,4 @@
 ﻿using Atlassian.Jira;
-using Atlassian.Jira.Remote;
 using Migration.Common;
 using Migration.Common.Log;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace JiraExport
 {
@@ -24,7 +22,7 @@ namespace JiraExport
             IncludeSubItems = 4
         }
 
-        private readonly string JiraApiV2 = "rest/api/2";
+        private readonly string JiraApi = "rest/api";
 
         private ILookup<string, string> JiraNameFieldCache = null;
 
@@ -48,6 +46,11 @@ namespace JiraExport
         public void Initialize(JiraSettings settings, ExportIssuesSummary exportIssuesSummary)
         {
             Settings = settings;
+
+            if (Settings.JiraApiVersion != 2 && Settings.JiraApiVersion != 3)
+            {
+                Logger.Log(LogLevel.Error, $"Invalid Jira API version: {Settings.JiraApiVersion}. Must be either 2 or 3.");
+            }
 
             Logger.Log(LogLevel.Info, "Retrieving Jira fields...");
             try
@@ -108,7 +111,9 @@ namespace JiraExport
 
         public IEnumerable<Comment> GetCommentsByItemKey(string itemKey)
         {
-            return _jiraServiceWrapper.Issues.GetCommentsAsync(itemKey).Result;
+            var options = new CommentQueryOptions();
+            options.Expand.Add("renderedBody");
+            return _jiraServiceWrapper.Issues.GetCommentsAsync(itemKey, options).Result;
         }
 
         public CustomField GetCustomField(string fieldName)
@@ -140,7 +145,7 @@ namespace JiraExport
 
             try
             {
-                var response = await _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/attachment/{id}");
+                var response = await _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/attachment/{id}");
                 var attObj = (JObject)response;
 
                 return new JiraAttachment
@@ -218,6 +223,24 @@ namespace JiraExport
 
         public IEnumerable<JiraItem> EnumerateIssues(string jql, HashSet<string> skipList, DownloadOptions downloadOptions)
         {
+            if (Settings.JiraApiVersion == 2)
+            {
+                return EnumerateIssuesV2(jql, skipList, downloadOptions);
+            }
+            else if (Settings.JiraApiVersion == 3)
+            {
+                return EnumerateIssuesV3(jql, skipList, downloadOptions);
+            }
+            else
+            {
+                // Invalid API Version already checked in Initialize()
+                Logger.Log(LogLevel.Error, $"Invalid Jira API version: {Settings.JiraApiVersion}. Must be either 2 or 3.");
+                return null;
+            }
+        }
+
+        public IEnumerable<JiraItem> EnumerateIssuesV2(string jql, HashSet<string> skipList, DownloadOptions downloadOptions)
+        {
             var currentStart = 0;
             IEnumerable<string> remoteIssueBatch = null;
             var index = 0;
@@ -229,7 +252,7 @@ namespace JiraExport
                 JToken response = null;
                 try
                 {
-                    response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/search?jql={jql}&startAt={currentStart}&maxResults={Settings.BatchSize}&fields=key").Result;
+                    response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/search?jql={jql}&startAt={currentStart}&maxResults={Settings.BatchSize}&fields=key").Result;
                 }
                 catch (Exception e)
                 {
@@ -304,6 +327,93 @@ namespace JiraExport
             while (remoteIssueBatch != null && remoteIssueBatch.Any());
         }
 
+        public IEnumerable<JiraItem> EnumerateIssuesV3(string jql, HashSet<string> skipList, DownloadOptions downloadOptions)
+        {
+            var nextPageToken = string.Empty;
+            IEnumerable<string> remoteIssueBatch = null;
+            var index = 0;
+
+            Logger.Log(LogLevel.Debug, "Enumerate remote issues");
+
+            var totalItems = GetItemCount(jql);
+
+            do
+            {
+                JToken response = null;
+                try
+                {
+                    response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/search/jql?jql={jql}&nextPageToken={nextPageToken}&maxResults={Settings.BatchSize}&fields=key").Result;
+                    nextPageToken = (string)response.SelectToken("$.nextPageToken");
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e, "Failed to retrieve issues");
+                    break;
+                }
+                if (response != null)
+                {
+                    remoteIssueBatch = response.SelectTokens("$.issues[*]").OfType<JObject>()
+                                            .Select(i => i.SelectToken("$.key").Value<string>());
+
+                    if (remoteIssueBatch == null || !remoteIssueBatch.Any())
+                    {
+                        if (index == 0)
+                        {
+                            Logger.Log(LogLevel.Warning, $"No issuse were found using jql: {jql}");
+                        }
+                        break;
+                    }
+
+                    foreach (var issueKey in remoteIssueBatch)
+                    {
+                        if (skipList.Contains(issueKey))
+                        {
+                            Logger.Log(LogLevel.Info, $"Skipped Jira '{issueKey}' - already downloaded.");
+                            index++;
+                            continue;
+                        }
+
+                        Logger.Log(LogLevel.Info, $"Processing {index + 1}/{totalItems} - '{issueKey}'.");
+                        var issue = ProcessItem(issueKey, skipList);
+
+                        if (issue == null)
+                            continue;
+
+                        yield return issue;
+                        index++;
+
+                        if (downloadOptions.HasFlag(DownloadOptions.IncludeParentEpics) && (issue.EpicParent != null) && !skipList.Contains(issue.EpicParent))
+                        {
+                            Logger.Log(LogLevel.Info, $"Processing epic parent '{issue.EpicParent}'.");
+                            var parentEpic = ProcessItem(issue.EpicParent, skipList);
+                            yield return parentEpic;
+                        }
+
+                        if (downloadOptions.HasFlag(DownloadOptions.IncludeParents) && (issue.Parent != null) && !skipList.Contains(issue.Parent))
+                        {
+                            Logger.Log(LogLevel.Info, $"Processing parent issue '{issue.Parent}'.");
+                            var parent = ProcessItem(issue.Parent, skipList);
+                            yield return parent;
+                        }
+
+                        if (downloadOptions.HasFlag(DownloadOptions.IncludeSubItems) && (issue.SubItems != null) && issue.SubItems.Any())
+                        {
+                            foreach (var subitemKey in issue.SubItems)
+                            {
+                                if (!skipList.Contains(subitemKey))
+                                {
+                                    Logger.Log(LogLevel.Info, $"Processing sub-item '{subitemKey}'.");
+                                    var subItem = ProcessItem(subitemKey, skipList);
+                                    yield return subItem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            while (nextPageToken != null);
+        }
+
         public struct JiraVersion
         {
             public string Version { get; set; }
@@ -321,9 +431,27 @@ namespace JiraExport
             Logger.Log(LogLevel.Debug, $"Get item count using query: '{jql}'");
             try
             {
-                var response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/search?jql={jql}&maxResults=0").Result;
+                if (Settings.JiraApiVersion == 2)
+                {
+                    var response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/search?jql={jql}&maxResults=0").Result;
+                    return (int)response.SelectToken("$.total");
+                }
+                else if (Settings.JiraApiVersion == 3)
+                {
+                    var requestBody = new
+                    {
+                        jql = jql
+                    };
+                    var response = _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.POST, $"{JiraApi}/{Settings.JiraApiVersion}/search/approximate-count", requestBody).Result;
 
-                return (int)response.SelectToken("$.total");
+                    return (int)response.SelectToken("$.count");
+                }
+                else
+                {
+                    // Invalid API Version already checked in Initialize()
+                    Logger.Log(LogLevel.Error, $"Invalid Jira API version: {Settings.JiraApiVersion}. Must be either 2 or 3.");
+                    return -1;
+                }
             }
             catch (Exception e)
             {
@@ -335,13 +463,13 @@ namespace JiraExport
 
         public JiraVersion GetJiraVersion()
         {
-            var response = (JObject)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/serverInfo").Result;
+            var response = (JObject)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/serverInfo").Result;
             return new JiraVersion((string)response.SelectToken("$.version"), (string)response.SelectToken("$.deploymentType"));
         }
 
         public IEnumerable<JObject> DownloadChangelog(string issueKey)
         {
-            var response = (JObject)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/issue/{issueKey}?expand=changelog,renderedFields&fields=created").Result;
+            var response = (JObject)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/issue/{issueKey}?expand=changelog,renderedFields&fields=created").Result;
             return response.SelectTokens("$.changelog.histories[*]").Cast<JObject>();
         }
 
@@ -350,7 +478,7 @@ namespace JiraExport
             try
             {
                 var response =
-                    _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/issue/{key}?expand=renderedFields").Result;
+                    _jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/issue/{key}?expand=renderedFields").Result;
 
                 var remoteItem = (JObject)response;
                 return remoteItem;
@@ -360,7 +488,6 @@ namespace JiraExport
                 Logger.Log(e, $"Failed to download issue with key: {key}");
                 return default(JObject);
             }
-
         }
 
         public async Task<List<RevisionAction<JiraAttachment>>> DownloadAttachments(JiraRevision rev)
@@ -440,7 +567,7 @@ namespace JiraExport
 
             if (JiraNameFieldCache == null)
             {
-                response = (JArray)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/field").Result;
+                response = (JArray)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/field").Result;
                 JiraNameFieldCache = CreateFieldCacheLookup(response, "name", "id");
             }
 
@@ -450,7 +577,7 @@ namespace JiraExport
             {
                 if (JiraKeyFieldCache == null)
                 {
-                    response = response ?? (JArray)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApiV2}/field").Result;
+                    response = response ?? (JArray)_jiraServiceWrapper.RestClient.ExecuteRequestAsync(Method.GET, $"{JiraApi}/{Settings.JiraApiVersion}/field").Result;
                     JiraKeyFieldCache = CreateFieldCacheLookup(response, "key", "id");
                 }
                 customId = GetItemFromFieldCache(propertyName, JiraKeyFieldCache);
