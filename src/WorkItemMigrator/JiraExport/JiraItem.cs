@@ -220,16 +220,14 @@ namespace JiraExport
 
         private static List<JiraRevision> BuildCommentRevisions(JiraItem jiraItem, IJiraProvider jiraProvider)
         {
-            var renderedFields = jiraItem.RemoteIssue.SelectToken("$.renderedFields.comment.comments");
             var comments = jiraProvider.GetCommentsByItemKey(jiraItem.Key);
             return comments.Select((c, i) =>
             {
-                var rc = renderedFields.SelectToken($"$.[{i}].body");
-                return BuildCommentRevision(c, rc, jiraItem);
+                return BuildCommentRevision(c, c.RenderedBody, jiraItem);
             }).ToList();
         }
 
-        private static JiraRevision BuildCommentRevision(Comment c, JToken rc, JiraItem jiraItem)
+        private static JiraRevision BuildCommentRevision(Comment c, string rc, JiraItem jiraItem)
         {
             var author = "NoAuthorDefined";
             if (c.AuthorUser is null)
@@ -252,7 +250,7 @@ namespace JiraExport
             {
                 Author = author,
                 Time = c.CreatedDate.Value,
-                Fields = new Dictionary<string, object>() { { "comment", c.Body }, { "comment$Rendered", rc.Value<string>() } },
+                Fields = new Dictionary<string, object>() { { "comment", c.Body }, { "comment$Rendered", rc } },
                 AttachmentActions = new List<RevisionAction<JiraAttachment>>(),
                 LinkActions = new List<RevisionAction<JiraLink>>()
             };

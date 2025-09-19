@@ -111,7 +111,9 @@ namespace JiraExport
 
         public IEnumerable<Comment> GetCommentsByItemKey(string itemKey)
         {
-            return _jiraServiceWrapper.Issues.GetCommentsAsync(itemKey).Result;
+            var options = new CommentQueryOptions();
+            options.Expand.Add("renderedBody");
+            return _jiraServiceWrapper.Issues.GetCommentsAsync(itemKey, options).Result;
         }
 
         public CustomField GetCustomField(string fieldName)
