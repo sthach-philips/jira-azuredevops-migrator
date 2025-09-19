@@ -40,6 +40,10 @@ namespace Migration.Jira_Export.Tests
 
             JiraProvider sut = new JiraProvider(jiraServiceMock);
 
+            var jiraSettings = new JiraSettings("", "", "", "", "");
+            jiraSettings.JiraApiVersion = 3;
+            sut.Initialize(jiraSettings, new ExportIssuesSummary());
+
             //Act
             var id = sut.GetCustomId(propertyName);
 
@@ -63,6 +67,10 @@ namespace Migration.Jira_Export.Tests
 
             JiraProvider sut = new JiraProvider(jiraServiceMock);
 
+            var jiraSettings = new JiraSettings("", "", "", "", "");
+            jiraSettings.JiraApiVersion = 3;
+            sut.Initialize(jiraSettings, new ExportIssuesSummary());
+
             //Act
             var id = sut.GetCustomId(propertyName);
 
@@ -84,6 +92,10 @@ namespace Migration.Jira_Export.Tests
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
             JiraProvider sut = new JiraProvider(jiraServiceMock);
+
+            var jiraSettings = new JiraSettings("", "", "", "", "");
+            jiraSettings.JiraApiVersion = 3;
+            sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
             var id = sut.GetCustomId(propertyName);
@@ -107,6 +119,10 @@ namespace Migration.Jira_Export.Tests
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
             JiraProvider sut = new JiraProvider(jiraServiceMock);
+
+            var jiraSettings = new JiraSettings("", "", "", "", "");
+            jiraSettings.JiraApiVersion = 3;
+            sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
             var id = sut.GetCustomId(fieldname);
@@ -132,6 +148,10 @@ namespace Migration.Jira_Export.Tests
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
             JiraProvider sut = new JiraProvider(jiraServiceMock);
+
+            var jiraSettings = new JiraSettings("", "", "", "", "");
+            jiraSettings.JiraApiVersion = 3;
+            sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
             var actualId1 = sut.GetCustomId(propertyName1);
