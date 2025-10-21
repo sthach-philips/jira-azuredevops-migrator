@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -12,9 +12,6 @@ namespace Migration.Common
 
         }
 
-        protected FieldMapping(SerializationInfo serializationInfo, StreamingContext streamingContext) : base(serializationInfo, streamingContext)
-        {
 
-        }
     }
 }

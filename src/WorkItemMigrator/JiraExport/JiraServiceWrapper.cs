@@ -1,4 +1,4 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Atlassian.Jira.Remote;
 using JiraExport;
 using Migration.Common.Log;

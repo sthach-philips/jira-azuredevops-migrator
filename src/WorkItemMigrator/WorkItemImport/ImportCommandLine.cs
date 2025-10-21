@@ -1,4 +1,4 @@
-﻿using Common.Config;
+using Common.Config;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Migration.Common;

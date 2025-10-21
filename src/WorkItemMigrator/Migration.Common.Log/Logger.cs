@@ -1,4 +1,4 @@
-﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using System;
@@ -77,8 +77,9 @@ namespace Migration.Common.Log
             var key = ConfigurationManager.AppSettings["applicationInsightsKey"];
             if (!string.IsNullOrEmpty(key) && Guid.TryParse(key, out _))
             {
-                TelemetryConfiguration.Active.InstrumentationKey = key;
-                _telemetryClient = new TelemetryClient();
+                var config = TelemetryConfiguration.CreateDefault();
+                config.ConnectionString = $"InstrumentationKey={key}";
+                _telemetryClient = new TelemetryClient(config);
                 _telemetryClient.Context.Component.Version = VersionInfo.GetVersionInfo();
                 _telemetryClient.Context.Session.Id = SessionId;
             }

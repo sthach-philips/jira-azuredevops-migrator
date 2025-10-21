@@ -1,4 +1,4 @@
-﻿using Migration.Common.Config;
+using Migration.Common.Config;
 
 namespace WorkItemImport
 {

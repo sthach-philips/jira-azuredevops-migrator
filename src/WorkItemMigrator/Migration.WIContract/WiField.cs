@@ -1,4 +1,4 @@
-﻿namespace Migration.WIContract
+namespace Migration.WIContract
 {
     public class WiField
     {

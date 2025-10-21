@@ -1,7 +1,7 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Atlassian.Jira.Remote;
 using AutoFixture;
-using AutoFixture.AutoNSubstitute;
+
 using JiraExport;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
@@ -25,7 +25,7 @@ namespace Migration.Jira_Export.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+            
         }
 
         [Test]

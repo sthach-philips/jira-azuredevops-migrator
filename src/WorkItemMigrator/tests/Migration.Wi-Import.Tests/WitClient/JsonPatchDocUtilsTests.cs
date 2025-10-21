@@ -1,5 +1,5 @@
-﻿using AutoFixture;
-using AutoFixture.AutoNSubstitute;
+using AutoFixture;
+
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using NUnit.Framework;
@@ -21,7 +21,7 @@ namespace Migration.Wi_Import.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+            
         }
 
         [Test]

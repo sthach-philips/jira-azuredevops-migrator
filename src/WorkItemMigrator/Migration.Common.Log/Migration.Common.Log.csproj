@@ -19,11 +19,5 @@
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
+
 </Project>

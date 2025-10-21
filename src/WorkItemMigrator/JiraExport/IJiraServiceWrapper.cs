@@ -1,4 +1,4 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Atlassian.Jira.Remote;
 
 namespace JiraExport

@@ -1,5 +1,5 @@
-﻿using AutoFixture;
-using AutoFixture.AutoNSubstitute;
+using AutoFixture;
+
 using Common.Config;
 using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
@@ -17,7 +17,7 @@ namespace Migration.Common.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+
         }
 
         [Test]

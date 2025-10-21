@@ -1,4 +1,4 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

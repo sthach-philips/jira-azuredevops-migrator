@@ -1,4 +1,4 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Common.Config;
 using JiraExport.RevisionUtils;
 using Migration.Common;

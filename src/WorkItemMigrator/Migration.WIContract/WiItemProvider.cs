@@ -1,4 +1,4 @@
-﻿using Migration.Common.Log;
+using Migration.Common.Log;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

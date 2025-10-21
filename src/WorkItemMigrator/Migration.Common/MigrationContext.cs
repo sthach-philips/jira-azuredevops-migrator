@@ -1,4 +1,4 @@
-﻿using Common.Config;
+using Common.Config;
 using Migration.Common.Log;
 using Migration.WIContract;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using Migration.Common.Log;
+using Migration.Common.Log;
 using System;
 using System.Collections.Generic;
 

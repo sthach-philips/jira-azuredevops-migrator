@@ -1,5 +1,5 @@
-﻿using AutoFixture;
-using AutoFixture.AutoNSubstitute;
+using AutoFixture;
+
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
@@ -180,7 +180,7 @@ namespace Migration.Wi_Import.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+            
         }
 
         [Test]

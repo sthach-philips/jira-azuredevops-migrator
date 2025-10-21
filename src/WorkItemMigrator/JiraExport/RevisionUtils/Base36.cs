@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Code taken from: https://github.com/bogdanbujdea/csharpbase36/blob/master/Base36Encoder/Base36.cs
  */
 

@@ -1,4 +1,4 @@
-﻿namespace Migration.Common
+namespace Migration.Common
 {
     public interface ISourceRevision
     {

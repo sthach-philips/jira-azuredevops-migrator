@@ -1,4 +1,4 @@
-﻿using AutoFixture.AutoNSubstitute;
+
 using AutoFixture;
 using NUnit.Framework;
 using System;
@@ -20,7 +20,7 @@ namespace Migration.Jira_Export.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+            
         }
 
         [Test]

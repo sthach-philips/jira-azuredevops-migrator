@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using NSubstitute;
 using AutoFixture;
 using Common.Config;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json.Linq;
 using Type = Migration.Common.Config.Type;
-using AutoFixture.AutoNSubstitute;
+
 
 namespace Migration.Jira_Export.Tests
 {
@@ -26,7 +26,7 @@ namespace Migration.Jira_Export.Tests
         public void SetupValueMapperTests()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
+            
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _config = new ConfigJson

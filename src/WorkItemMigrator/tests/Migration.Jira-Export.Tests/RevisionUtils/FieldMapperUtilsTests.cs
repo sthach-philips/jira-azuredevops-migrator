@@ -1,5 +1,5 @@
-﻿using AutoFixture;
-using AutoFixture.AutoNSubstitute;
+using AutoFixture;
+
 using Common.Config;
 using JiraExport;
 using Newtonsoft.Json.Linq;
@@ -59,7 +59,7 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization());
+            
         }
 
         [Test]

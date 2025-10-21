@@ -1,4 +1,4 @@
-﻿using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch;

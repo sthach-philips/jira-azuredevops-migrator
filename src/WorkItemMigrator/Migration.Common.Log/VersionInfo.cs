@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using Semver;
 using System;
 using System.Diagnostics;
@@ -43,7 +43,9 @@ namespace Migration.Common.Log
             {
                 latestVersion = GetLatestReleaseVersion();
 
-                if (SemVersion.Parse(latestVersion) > SemVersion.Parse(currentVersion))
+                var latest = SemVersion.Parse(latestVersion, SemVersionStyles.Strict);
+                var current = SemVersion.Parse(currentVersion, SemVersionStyles.Strict);
+                if (latest.ComparePrecedenceTo(current) > 0)
                     return true;
             }
             catch

@@ -1,4 +1,4 @@
-﻿using Atlassian.Jira;
+using Atlassian.Jira;
 using Migration.Common;
 using Migration.Common.Log;
 using Newtonsoft.Json.Linq;

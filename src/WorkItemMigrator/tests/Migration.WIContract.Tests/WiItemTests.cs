@@ -1,5 +1,4 @@
 using AutoFixture;
-using AutoFixture.AutoNSubstitute;
 using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,14 +8,13 @@ namespace Migration.WIContract.Tests
     [ExcludeFromCodeCoverage]
     public class WiItemTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
+        // use auto fixture to help instantiate with dummy data
         private Fixture _fixture;
 
         [SetUp]
         public void Setup()
         {
             _fixture = new Fixture();
-            _fixture.Customize(new AutoNSubstituteCustomization() { });
         }
 
         [Test]

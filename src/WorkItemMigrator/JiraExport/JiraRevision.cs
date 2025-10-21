@@ -1,4 +1,4 @@
-﻿using Migration.Common;
+using Migration.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;

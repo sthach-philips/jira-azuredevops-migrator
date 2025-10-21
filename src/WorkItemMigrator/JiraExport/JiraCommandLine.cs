@@ -1,4 +1,4 @@
-﻿using Common.Config;
+using Common.Config;
 using Microsoft.Extensions.CommandLineUtils;
 using Migration.Common.Config;
 using Migration.Common.Log;

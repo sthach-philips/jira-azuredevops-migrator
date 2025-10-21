@@ -1,4 +1,4 @@
-﻿using Common.Config;
+using Common.Config;
 
 namespace Migration.Common.Config
 {
