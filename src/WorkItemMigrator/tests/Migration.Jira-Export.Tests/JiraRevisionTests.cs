@@ -1,10 +1,8 @@
-using AutoFixture;
-
+using System.Diagnostics.CodeAnalysis;
 using JiraExport;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -12,28 +10,18 @@ namespace Migration.Jira_Export.Tests
     [ExcludeFromCodeCoverage]
     public class JiraRevisionTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            
-        }
-
         [Test]
         public void When_calling_compare_to_with_null_argumentss_Then_1_is_returned()
         {
-            JiraRevision sut1 = new JiraRevision(CreateJiraItem());
+            var sut1 = new JiraRevision(CreateJiraItem());
             Assert.That(() => sut1.CompareTo(null), Is.EqualTo(1));
         }
 
         [Test]
         public void When_calling_compare_to_with_equal_objects_Then_0_is_returned()
         {
-            JiraRevision sut1 = new JiraRevision(CreateJiraItem());
-            JiraRevision sut2 = new JiraRevision(CreateJiraItem());
+            var sut1 = new JiraRevision(CreateJiraItem());
+            var sut2 = new JiraRevision(CreateJiraItem());
 
             Assert.That(() => sut1.CompareTo(sut2), Is.EqualTo(0));
         }
@@ -41,8 +29,8 @@ namespace Migration.Jira_Export.Tests
         [Test]
         public void When_calling_compare_to_with_non_equal_objects_Then_1_is_returned()
         {
-            JiraRevision sut1 = new JiraRevision(CreateJiraItem());
-            JiraRevision sut2 = new JiraRevision(CreateJiraItem());
+            var sut1 = new JiraRevision(CreateJiraItem());
+            var sut2 = new JiraRevision(CreateJiraItem());
             sut1.Time = System.DateTime.Now;
 
             Assert.That(() => sut1.CompareTo(sut2), Is.EqualTo(1));
@@ -50,13 +38,13 @@ namespace Migration.Jira_Export.Tests
 
         private JiraItem CreateJiraItem()
         {
-            var provider = _fixture.Freeze<IJiraProvider>();
+            var provider = Substitute.For<IJiraProvider>();
 
             var issueType = JObject.Parse(@"{ 'issuetype': {'name': 'Story'}}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
-            string issueKey = "issue_key";
+            const string issueKey = "issue_key";
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "fields", issueType },
                 { "renderedFields", renderedFields },
@@ -64,16 +52,17 @@ namespace Migration.Jira_Export.Tests
             };
 
             provider.DownloadIssue(default).ReturnsForAnyArgs(remoteIssue);
+            provider.DownloadChangelog(default).ReturnsForAnyArgs(new System.Collections.Generic.List<JObject>());
             provider.GetSettings().ReturnsForAnyArgs(CreateJiraSettings());
 
-            JiraItem jiraItem = JiraItem.CreateFromRest(issueKey, provider);
+            var jiraItem = JiraItem.CreateFromRest(issueKey, provider);
 
             return jiraItem;
         }
 
         private JiraSettings CreateJiraSettings()
         {
-            JiraSettings settings = new JiraSettings("userID", "pass", "token", "url", "project")
+            var settings = new JiraSettings("userID", "pass", "token", "url", "project")
             {
                 EpicLinkField = "EpicLinkField",
                 SprintField = "SprintField"

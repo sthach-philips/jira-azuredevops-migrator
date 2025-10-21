@@ -2,6 +2,7 @@ using AutoFixture;
 
 using Common.Config;
 using JiraExport;
+using Migration.Common.Config;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
@@ -15,16 +16,12 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
     [ExcludeFromCodeCoverage]
     public class FieldMapperUtilsTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
         private JiraRevision MockRevisionWithParentItem(string issueKey, string revisionSummary)
         {
-            var provider = _fixture.Freeze<IJiraProvider>();
-
+            var provider = Substitute.For<IJiraProvider>();
             var issueType = JObject.Parse(@"{ 'issuetype': {'name': 'Story'}}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "fields", issueType },
                 { "renderedFields", renderedFields },
@@ -32,13 +29,14 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
             };
 
             provider.DownloadIssue(default).ReturnsForAnyArgs(remoteIssue);
-            JiraSettings settings = new JiraSettings("userID", "pass", "token", "url", "project")
+            provider.DownloadChangelog(default).ReturnsForAnyArgs(new List<JObject>());
+            var settings = new JiraSettings("userID", "pass", "token", "url", "project")
             {
                 SprintField = "SprintField"
             };
             provider.GetSettings().ReturnsForAnyArgs(settings);
 
-            JiraItem item = JiraItem.CreateFromRest(issueKey, provider);
+            var item = JiraItem.CreateFromRest(issueKey, provider);
             var revision = new JiraRevision(item)
             {
                 Fields = new Dictionary<string, object>
@@ -55,17 +53,10 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
             return revision;
         }
 
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            
-        }
-
         [Test]
         public void When_calling_map_remaining_work_with_valid_args_Then_expected_output_is_returned()
         {
-            object output = FieldMapperUtils.MapRemainingWork("36000");
+            var output = FieldMapperUtils.MapRemainingWork("36000");
 
             Assert.AreEqual(10, output);
         }
@@ -76,7 +67,7 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [TestCase("Invalid")]
         public void When_calling_map_remaining_work_with_invalid_arguments_Then_null_is_returned(string value)
         {
-            object output = FieldMapperUtils.MapRemainingWork(value);
+            var output = FieldMapperUtils.MapRemainingWork(value);
 
             Assert.AreEqual(null, output);
         }
@@ -85,11 +76,8 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void When_calling_map_title_with_empty_args_Then_null_is_returned()
         {
             (bool, object) expected = (false, null);
-            var provider = _fixture.Freeze<IJiraProvider>();
-            provider.DownloadIssue(default).Returns(new JObject());
-
-            var revision = _fixture.Freeze<JiraRevision>();
-
+            var revision = MockRevisionWithParentItem("", "");
+            revision.Fields["summary"] = null;
 
             (bool, object) output = FieldMapperUtils.MapTitle(revision);
 
@@ -99,8 +87,8 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_title_with_valid_args_Then_expected_output_is_returned()
         {
-            string issueKey = "issue_key";
-            string summary = "My Summary";
+            const string issueKey = "issue_key";
+            const string summary = "My Summary";
 
             JiraRevision revision = MockRevisionWithParentItem(issueKey, summary);
             (bool, object) expected = (true, string.Format("[{0}] {1}", issueKey, summary));
@@ -113,11 +101,10 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_title_without_key_with_valid_args_Then_expected_output_is_returned()
         {
-            string issueKey = "issue_key";
-            string summary = "My Summary";
+            const string issueKey = "issue_key";
+            const string summary = "My Summary";
 
             JiraRevision revision = MockRevisionWithParentItem(issueKey, summary);
-
 
             (bool, object) expected = (true, summary);
 
@@ -130,9 +117,8 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void When_calling_map_title_without_key_with_empty_args_Then_null_is_returned()
         {
             (bool, object) expected = (false, null);
-            var provider = _fixture.Freeze<IJiraProvider>();
-            provider.DownloadIssue(default).Returns(new JObject());
-            var revision = _fixture.Freeze<JiraRevision>();
+            var revision = MockRevisionWithParentItem("", "");
+            revision.Fields["summary"] = null;
 
             (bool, object) output = FieldMapperUtils.MapTitleWithoutKey(revision);
 
@@ -148,7 +134,7 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_tags_with_empty_string_arg_Then_null_is_returned()
         {
-            object output = FieldMapperUtils.MapTags("");
+            var output = FieldMapperUtils.MapTags("");
             Assert.AreEqual(string.Empty, output);
         }
 
@@ -156,7 +142,7 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void When_calling_map_tags_with_valid_args_Then_expected_output_is_returned()
         {
             string[] tags = { "TAG_A", "TAG_B", "TAG_C" };
-            object output = FieldMapperUtils.MapTags(string.Join(" ", tags));
+            var output = FieldMapperUtils.MapTags(string.Join(" ", tags));
             Assert.AreEqual(string.Join(";", tags), output);
         }
 
@@ -169,40 +155,40 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_array_with_empty_string_arg_Then_null_is_returned()
         {
-            object actualResult = FieldMapperUtils.MapArray("");
+            var actualResult = FieldMapperUtils.MapArray("");
 
             Assert.That(actualResult, Is.Null);
-
         }
 
         [Test]
         public void When_calling_map_array_with_valid_args_Then_expected_output_is_returned()
         {
             string[] tags = { "ELEM_A", "ELEM_B", "ELEM_C" };
-            object output = FieldMapperUtils.MapArray(string.Join(",", tags));
+            var output = FieldMapperUtils.MapArray(string.Join(",", tags));
             Assert.AreEqual(string.Join(";", tags), output);
         }
 
         [Test]
-        public void When_calling_map_array_with_null_arguments_Then_and_exception_is_thrown()
+        public void When_calling_map_array_with_null_arguments_Then_null_is_returned()
         {
-            Assert.Throws<ArgumentNullException>(() => { FieldMapperUtils.MapArray(null); });
+            var actualResult = FieldMapperUtils.MapArray(null);
+
+            Assert.That(actualResult, Is.Null);
         }
 
         [Test]
         public void When_calling_map_sprint_with_empty_string_arg_Then_null_is_returned()
         {
-            object actualResult = FieldMapperUtils.MapSprint("");
+            var actualResult = FieldMapperUtils.MapSprint("");
 
             Assert.That(actualResult, Is.Null);
-
         }
 
         [Test]
         public void When_calling_map_sprint_with_valid_args_Then_expected_output_is_returned()
         {
             string[] sprintPath = { "Base", "Segment", "Sprint" };
-            object output = FieldMapperUtils.MapSprint(string.Join(",", sprintPath));
+            var output = FieldMapperUtils.MapSprint(string.Join(",", sprintPath));
             Assert.AreEqual(sprintPath[^1], output);
         }
 
@@ -210,45 +196,48 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void When_calling_map_sprint_with_invalid_azdo_chars_Then_expected_output_is_returned()
         {
             string[] sprintPath = { "*#/Base", "Seg*#/ment", "Sprint*#/" };
-            string expected = "Sprint";
-            object output = FieldMapperUtils.MapSprint(string.Join(",", sprintPath));
+            const string expected = "Sprint";
+            var output = FieldMapperUtils.MapSprint(string.Join(",", sprintPath));
             Assert.AreEqual(expected, output);
         }
 
         [Test]
         public void When_calling_map_sprint_with_full_sprint_object_as_str_Then_expected_output_is_returned()
         {
-            string sprintPath = "com.atlassian.greenhopper.service.sprint.Sprint@7c6e1967[id=442906,rapidViewId"
+            const string sprintPath = "com.atlassian.greenhopper.service.sprint.Sprint@7c6e1967[id=442906,rapidViewId"
                 + "=187524,state=ACTIVE,name=LMS 2024_05,startDate=2024-10-14T00:00:00.000Z,endDate=2024-11-01T"
                 + "23:00:00.000Z,completeDate=<null>,activatedDate=2024-10-13T18:14:54.334Z,sequence=449386,goa"
                 + "l=,synced=false,autoStartStop=false,incompleteIssuesDestinationId=<null>]";
-            string expectedOutput = "LMS 2024_05";
-            object output = FieldMapperUtils.MapSprint(sprintPath);
+            const string expectedOutput = "LMS 2024_05";
+            var output = FieldMapperUtils.MapSprint(sprintPath);
             Assert.AreEqual(expectedOutput, output);
         }
 
         [Test]
         public void When_calling_map_value_with_valid_args_Then_expected_output_is_returned()
         {
-
-            var configJson = _fixture.Create<ConfigJson>();
-
-            configJson.TypeMap.Types = new List<Common.Config.Type>() { new Common.Config.Type() { Source = "Story", Target = "Story" } };
-            configJson.FieldMap.Fields = new List<Common.Config.Field>()
+            var configJson = new ConfigJson
             {
-                new Common.Config.Field()
-            {
-                Source = "priority", Target = "Microsoft.VSTS.Common.Priority",
-                Mapping = new Common.Config.Mapping
+                TypeMap = new TypeMap { Types = [new Common.Config.Type() { Source = "Story", Target = "Story" }] },
+                FieldMap = new FieldMap
                 {
-                    Values = new List<Common.Config.Value>
+                    Fields =
+                [
+                    new Common.Config.Field()
                     {
-                        new Common.Config.Value
-                    {
-                        Source = "High", Target = "1"
+                        Source = "priority", Target = "Microsoft.VSTS.Common.Priority",
+                        Mapping = new Common.Config.Mapping
+                        {
+                            Values =
+                            [
+                                new Common.Config.Value
+                                {
+                                    Source = "High", Target = "1"
+                                }
+                            ]
                         }
                     }
-                    }
+                ]
                 }
             };
 
@@ -268,27 +257,30 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_value_with_valid_args_and_null_sourcevalue_Then_expected_output_is_returned()
         {
-
-            var configJson = _fixture.Create<ConfigJson>();
-
-            configJson.TypeMap.Types = new List<Common.Config.Type>() { new Common.Config.Type() { Source = "Story", Target = "Story" } };
-            configJson.FieldMap.Fields = new List<Common.Config.Field>()
+            var configJson = new ConfigJson
             {
-                new Common.Config.Field()
+                TypeMap = new TypeMap { Types = [new Common.Config.Type() { Source = "Story", Target = "Story" }] },
+                FieldMap = new FieldMap
+                {
+                    Fields =
+                [
+                    new Common.Config.Field()
                     {
                         Source = "resolution", Target = "System.Reason",
                         Mapping = new Common.Config.Mapping
                         {
-                            Values = new List<Common.Config.Value>
-                            {
+                            Values =
+                            [
                                 new Common.Config.Value
-                            {
-                                Source = "Fixed", Target = "Resolved"
+                                {
+                                    Source = "Fixed", Target = "Resolved"
                                 }
-                            }
-                            }
+                            ]
                         }
-                    };
+                    }
+                ]
+                }
+            };
 
             var jiraRevision = MockRevisionWithParentItem("issue_key", "My Summary");
             // Ensure a null value is added to the revision
@@ -308,25 +300,28 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_value_with_missing_args_Then_false_and_null_is_returned()
         {
-
-            var configJson = _fixture.Create<ConfigJson>();
-
-            configJson.TypeMap.Types = new List<Common.Config.Type>() { new Common.Config.Type() { Source = "Story", Target = "Story" } };
-            configJson.FieldMap.Fields = new List<Common.Config.Field>()
+            var configJson = new ConfigJson
             {
-                new Common.Config.Field()
-            {
-                Source = "Whatever", Target = "Microsoft.VSTS.Common.Priority",
-                Mapping = new Common.Config.Mapping
+                TypeMap = new TypeMap { Types = [new Common.Config.Type() { Source = "Story", Target = "Story" }] },
+                FieldMap = new FieldMap
                 {
-                    Values = new List<Common.Config.Value>
+                    Fields =
+                [
+                    new Common.Config.Field()
                     {
-                        new Common.Config.Value
-                    {
-                        Source = "High", Target = "1"
+                        Source = "Whatever", Target = "Microsoft.VSTS.Common.Priority",
+                        Mapping = new Common.Config.Mapping
+                        {
+                            Values =
+                            [
+                                new Common.Config.Value
+                                {
+                                    Source = "High", Target = "1"
+                                }
+                            ]
                         }
                     }
-                    }
+                ]
                 }
             };
 
@@ -353,13 +348,11 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         public void When_calling_correct_rendered_html_value_with_empty_or_whitespace_string_arg_Then_the_description_is_mapped()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            provider.DownloadIssue(default).Returns(new JObject());
-            var revision = _fixture.Freeze<JiraRevision>();
-            string description = string.Empty;
+            var revision = MockRevisionWithParentItem("issue_key", "My Summary");
+            var description = string.Empty;
 
             //Act
-            string output = FieldMapperUtils.CorrectRenderedHtmlvalue(description, revision, true);
+            var output = FieldMapperUtils.CorrectRenderedHtmlvalue(description, revision, true);
 
             //Assert
             Assert.Multiple(() =>
@@ -370,29 +363,29 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_correct_rendered_html_value_with_valid_args_Then_expected_output_is_returned()
         {
-            string issueKey = "issue_key";
-            string summary = "My Summary";
+            const string issueKey = "issue_key";
+            const string summary = "My Summary";
 
             JiraRevision revision = MockRevisionWithParentItem(issueKey, summary);
 
-            RevisionAction<JiraAttachment> revisionAction = new RevisionAction<JiraAttachment>();
-            JiraAttachment attachment = new JiraAttachment
+            var revisionAction = new RevisionAction<JiraAttachment>();
+            var attachment = new JiraAttachment
             {
                 Url = "https://example.com"
             };
             revisionAction.Value = attachment;
 
-            revision.AttachmentActions = new List<RevisionAction<JiraAttachment>>
-            {
+            revision.AttachmentActions =
+            [
                 revisionAction
-            };
+            ];
 
-            string output = FieldMapperUtils.CorrectRenderedHtmlvalue("" +
+            var output = FieldMapperUtils.CorrectRenderedHtmlvalue("" +
                 "<h>https://example.com</h>" +
                 "<span class=\"image-wrap\">span_text<img https://abc.com />image_alt</span>" +
                 "<a href=https://123.com class=\"user-hover\" link_meta>link_text</a>",
                 revision, true);
-            string expected = "<h>https://example.com</h>" +
+            const string expected = "<h>https://example.com</h>" +
                 "<img https://abc.com />" +
                 "link_text";
             Assert.AreEqual(expected, output);
@@ -407,38 +400,39 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
         [Test]
         public void When_calling_map_rendered_value_with_valid_input_Then_expected_output_is_returned()
         {
-
-            var sourceField = "description";
-            var customFieldName = "custom_field_name";
-            var configJson = _fixture.Create<ConfigJson>();
-
-            var expectedOutput = "<h>https://example.com</h><img https://abc.com />link_text";
-
-            configJson.TypeMap.Types = new List<Common.Config.Type>() { new Common.Config.Type() { Source = "Story", Target = "Story" } };
-            configJson.FieldMap.Fields = new List<Common.Config.Field>()
+            const string sourceField = "description";
+            const string customFieldName = "custom_field_name";
+            var configJson = new ConfigJson
             {
-                new Common.Config.Field()
-            {
-                Source = sourceField, Target = "System.Description",
-                Mapper = "MapRendered"
-
+                TypeMap = new TypeMap { Types = [new Common.Config.Type() { Source = "Story", Target = "Story" }] },
+                FieldMap = new FieldMap
+                {
+                    Fields =
+                [
+                    new Common.Config.Field()
+                {
+                    Source = sourceField, Target = "System.Description",
+                    Mapper = "MapRendered"
+                    }
+                ]
                 }
             };
 
+            const string expectedOutput = "<h>https://example.com</h><img https://abc.com />link_text";
+
             var jiraRevision = MockRevisionWithParentItem("issue_key", "My Summary");
 
-            RevisionAction<JiraAttachment> revisionAction = new RevisionAction<JiraAttachment>();
-            JiraAttachment attachment = new JiraAttachment
+            var revisionAction = new RevisionAction<JiraAttachment>();
+            var attachment = new JiraAttachment
             {
                 Url = "https://example.com"
             };
             revisionAction.Value = attachment;
 
-            jiraRevision.AttachmentActions = new List<RevisionAction<JiraAttachment>>
-            {
+            jiraRevision.AttachmentActions =
+            [
                 revisionAction
-            };
-
+            ];
 
             var actualOutput = FieldMapperUtils.MapRenderedValue(jiraRevision, sourceField, false, customFieldName, configJson);
 
@@ -448,33 +442,32 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
                 Assert.That(actualOutput.Item2, Is.Not.Empty);
                 Assert.That(actualOutput.Item2, Is.EqualTo(expectedOutput));
             });
-
         }
 
         [Test]
         public void When_calling_map_rendered_value_with_invalid_input_Then_expected_false_and_null_is_returned()
         {
-
-            var sourceField = "non_existing_field";
-            var customFieldName = "custom_field_name";
-            var configJson = _fixture.Create<ConfigJson>();
-            configJson.TypeMap.Types = new List<Common.Config.Type>() { new Common.Config.Type() { Source = "Story", Target = "Story" } };
-            configJson.FieldMap.Fields = new List<Common.Config.Field>() { new Common.Config.Field() };
+            const string sourceField = "non_existing_field";
+            const string customFieldName = "custom_field_name";
+            var configJson = new ConfigJson
+            {
+                TypeMap = new TypeMap { Types = [new Common.Config.Type() { Source = "Story", Target = "Story" }] },
+                FieldMap = new FieldMap { Fields = [new Common.Config.Field()] }
+            };
 
             var jiraRevision = MockRevisionWithParentItem("issue_key", "My Summary");
 
-            RevisionAction<JiraAttachment> revisionAction = new RevisionAction<JiraAttachment>();
-            JiraAttachment attachment = new JiraAttachment
+            var revisionAction = new RevisionAction<JiraAttachment>();
+            var attachment = new JiraAttachment
             {
                 Url = "https://example.com"
             };
             revisionAction.Value = attachment;
 
-            jiraRevision.AttachmentActions = new List<RevisionAction<JiraAttachment>>
-            {
+            jiraRevision.AttachmentActions =
+            [
                 revisionAction
-            };
-
+            ];
 
             var actualOutput = FieldMapperUtils.MapRenderedValue(jiraRevision, sourceField, false, customFieldName, configJson);
 
@@ -483,7 +476,6 @@ namespace Migration.Jira_Export.Tests.RevisionUtils
                 Assert.That(actualOutput.Item1, Is.False);
                 Assert.That(actualOutput.Item2, Is.Null);
             });
-
         }
 
         [Test]

@@ -7,7 +7,6 @@ namespace Migration.Common.Log
     public class AbortMigrationException : Exception
     {
 
-
         public AbortMigrationException(string reason)
         {
             Reason = reason;

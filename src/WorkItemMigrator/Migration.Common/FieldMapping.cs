@@ -9,9 +9,7 @@ namespace Migration.Common
     {
         public FieldMapping()
         {
-
         }
-
 
     }
 }

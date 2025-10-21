@@ -1,10 +1,8 @@
-using AutoFixture;
-
-using Migration.WIContract;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Migration.WIContract;
+using NUnit.Framework;
 
 namespace Migration.Common.Tests
 {
@@ -12,20 +10,10 @@ namespace Migration.Common.Tests
     [ExcludeFromCodeCoverage]
     public class RevisionUtilityTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-
-        }
-
         [Test]
         public void When_calling_nextvaliddeltarev_with_one_param_Then_the_expected_result_is_returned()
         {
-            DateTime datetime = new DateTime();
+            var datetime = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
             DateTime expected = datetime + TimeSpan.FromMilliseconds(50);
             DateTime actual = RevisionUtility.NextValidDeltaRev(datetime);
@@ -36,7 +24,7 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_nextvaliddeltarev_with_next_more_than_current_Then_the_expected_result_is_returned()
         {
-            DateTime datetime1 = new DateTime();
+            var datetime1 = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
             DateTime datetime2 = datetime1 + TimeSpan.FromMilliseconds(60);
 
             DateTime expected = datetime1 + TimeSpan.FromMilliseconds(50);
@@ -48,8 +36,8 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_replacehtmlelements_with_imagewrappattern_Then_the_expected_result_is_returned()
         {
-            string expected = "<img src=\"img.jpg\" />";
-            string actual = RevisionUtility.ReplaceHtmlElements("<span class=\"image-wrap\">(<img src=\"img.jpg\" />)</span>");
+            const string expected = "<img src=\"img.jpg\" />";
+            var actual = RevisionUtility.ReplaceHtmlElements("<span class=\"image-wrap\">(<img src=\"img.jpg\" />)</span>");
 
             Assert.AreEqual(expected, actual);
         }
@@ -57,8 +45,8 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_replacehtmlelements_with_userlinkpattern_Then_the_expected_result_is_returned()
         {
-            string expected = "<a href=https://text.com class=\"user - hover\" >placeholder string</a>";
-            string actual = RevisionUtility.ReplaceHtmlElements("<a href=https://text.com class=\"user - hover\" >placeholder string</a>");
+            const string expected = "<a href=https://text.com class=\"user - hover\" >placeholder string</a>";
+            var actual = RevisionUtility.ReplaceHtmlElements("<a href=https://text.com class=\"user - hover\" >placeholder string</a>");
 
             Assert.AreEqual(expected, actual);
         }
@@ -66,7 +54,7 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_replacehtmlelements_with_null_parameter_Then_an_exception_is_thrown()
         {
-            Assert.Throws<ArgumentNullException>(() => { RevisionUtility.ReplaceHtmlElements(null); });
+            Assert.Throws<ArgumentNullException>(() => RevisionUtility.ReplaceHtmlElements(null));
         }
 
         [Test]
@@ -74,8 +62,8 @@ namespace Migration.Common.Tests
         {
             List<WiField> list = null;
 
-            bool expected = false;
-            bool actual = RevisionUtility.HasAnyByRefName(list, "name");
+            const bool expected = false;
+            var actual = RevisionUtility.HasAnyByRefName(list, "name");
 
             Assert.AreEqual(expected, actual);
         }
@@ -83,10 +71,10 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_hasanybyrefname_when_list_is_empty_Then_false_is_returned()
         {
-            List<WiField> list = new List<WiField>();
+            var list = new List<WiField>();
 
-            bool expected = false;
-            bool actual = RevisionUtility.HasAnyByRefName(list, "name");
+            const bool expected = false;
+            var actual = RevisionUtility.HasAnyByRefName(list, "name");
 
             Assert.AreEqual(expected, actual);
         }
@@ -94,17 +82,17 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_hasanybyrefname_when_list_contains_matching_refname_Then_true_is_returned()
         {
-            WiField field = new WiField
+            var field = new WiField
             {
                 ReferenceName = "name"
             };
-            List<WiField> list = new List<WiField>
+            var list = new List<WiField>
             {
                 field
             };
 
-            bool expected = true;
-            bool actual = RevisionUtility.HasAnyByRefName(list, "name");
+            const bool expected = true;
+            var actual = RevisionUtility.HasAnyByRefName(list, "name");
 
             Assert.AreEqual(expected, actual);
         }
@@ -112,20 +100,19 @@ namespace Migration.Common.Tests
         [Test]
         public void When_calling_hasanybyrefname_when_list_does_not_contain_matching_refname_Then_false_is_returned()
         {
-            WiField field = new WiField
+            var field = new WiField
             {
                 ReferenceName = "anothername"
             };
-            List<WiField> list = new List<WiField>
+            var list = new List<WiField>
             {
                 field
             };
 
-            bool expected = false;
-            bool actual = RevisionUtility.HasAnyByRefName(list, "name");
+            const bool expected = false;
+            var actual = RevisionUtility.HasAnyByRefName(list, "name");
 
             Assert.AreEqual(expected, actual);
         }
-
     }
 }

@@ -1,10 +1,8 @@
-using AutoFixture;
-
-using NSubstitute;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
+using NSubstitute;
+using NUnit.Framework;
 
 namespace Migration.Common.Tests
 {
@@ -12,15 +10,6 @@ namespace Migration.Common.Tests
     [ExcludeFromCodeCoverage]
     public class MigrationCommonTests
     {
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-
-        }
-
         [TestCase("a@jira.com", "a@azdo.com")]
         [TestCase("b@jira.com", "b@azdo.com")]
         public void When_generating_user_map_Then_map_is_correct(string source, string target)
@@ -39,8 +28,7 @@ namespace Migration.Common.Tests
         public void When_calling_ParseUserMappings_with_non_exisiting_file_Return_empty_Dictionary()
         {
             //Assign
-
-            var fileSystem = _fixture.Freeze<IFileSystem>();
+            var fileSystem = Substitute.For<IFileSystem>();
             fileSystem.File.Exists(Arg.Any<string>()).Returns(true);
 
             var expected = new Dictionary<string, string>();
@@ -51,6 +39,5 @@ namespace Migration.Common.Tests
             //Assert
             Assert.That(actualResult.Count, Is.EqualTo(expected.Count));
         }
-
     }
 }

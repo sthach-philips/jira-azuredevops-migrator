@@ -20,13 +20,13 @@ namespace Migration.WIContract.Tests
         [Test]
         public void When_calling_tostring_Then_the_expected_string_value_is_returned()
         {
-            WiField sut = new WiField
+            var sut = new WiField
             {
                 ReferenceName = "referenceName",
                 Value = "objValue"
             };
 
-            string expectedToString = $"[{sut.ReferenceName}]={sut.Value}";
+            var expectedToString = $"[{sut.ReferenceName}]={sut.Value}";
 
             Assert.That(() => sut.ToString(), Is.EqualTo(expectedToString));
         }

@@ -40,38 +40,56 @@ namespace JiraExport
         public static (bool, object) MapTitle(JiraRevision r)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
-            if (r.Fields.TryGetValue("summary", out object summary))
+            if (r.Fields.TryGetValue("summary", out object summary) && summary != null)
+            {
                 return (true, $"[{r.ParentItem.Key}] {summary}");
+            }
             else
+            {
                 return (false, null);
+            }
         }
         public static (bool, object) MapTitleWithoutKey(JiraRevision r)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
-            if (r.Fields.TryGetValue("summary", out object summary))
+            if (r.Fields.TryGetValue("summary", out object summary) && summary != null)
+            {
                 return (true, summary);
+            }
             else
+            {
                 return (false, null);
+            }
         }
 
         public static (bool, object) MapValue(JiraRevision r, string itemSource, string itemTarget, ConfigJson config, ExportIssuesSummary exportIssuesSummary)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
             if (config == null)
+            {
                 throw new ArgumentNullException(nameof(config));
+            }
 
             var targetWit = (from t in config.TypeMap.Types where t.Source == r.Type select t.Target).FirstOrDefault();
 
             var hasFieldValue = r.Fields.TryGetValue(itemSource, out object value);
 
             if (!hasFieldValue)
+            {
                 return (false, null);
+            }
 
             foreach (var item in config.FieldMap.Fields.Where(i => i.Mapping?.Values != null))
             {
@@ -103,10 +121,14 @@ namespace JiraExport
         public static (bool, object) MapRenderedValue(JiraRevision r, string sourceField, bool isCustomField, string customFieldName, ConfigJson config)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
             if (config == null)
+            {
                 throw new ArgumentNullException(nameof(config));
+            }
 
             sourceField = SetCustomFieldName(sourceField, isCustomField, customFieldName);
 
@@ -116,7 +138,9 @@ namespace JiraExport
 
             var hasFieldValue = r.Fields.TryGetValue(fieldName, out object value);
             if (!hasFieldValue)
+            {
                 return (false, null);
+            }
 
             foreach (var item in config.FieldMap.Fields)
             {
@@ -142,37 +166,50 @@ namespace JiraExport
         public static object MapTags(string labels)
         {
             if (labels == null)
+            {
                 throw new ArgumentNullException(nameof(labels));
+            }
 
             if (string.IsNullOrWhiteSpace(labels))
+            {
                 return string.Empty;
+            }
 
             var tags = labels.Split(' ');
             if (!tags.Any())
+            {
                 return string.Empty;
+            }
             else
+            {
                 return string.Join(";", tags);
+            }
         }
 
         public static object MapArray(string field)
         {
-            if (field == null)
-                throw new ArgumentNullException(nameof(field));
-
             if (string.IsNullOrWhiteSpace(field))
+            {
                 return null;
+            }
 
             var values = field.Split(',');
             if (!values.Any())
+            {
                 return null;
+            }
             else
+            {
                 return string.Join(";", values);
+            }
         }
 
         public static object MapSprint(string iterationPathsString)
         {
             if (string.IsNullOrWhiteSpace(iterationPathsString))
+            {
                 return null;
+            }
 
             // For certain configurations of Jira, the entire Sprint object is returned by the
             // fields Rest API instead of the Sprint name
@@ -213,7 +250,9 @@ namespace JiraExport
         public static object MapLexoRank(string lexoRank)
         {
             if (string.IsNullOrEmpty(lexoRank) || !LexoRankRegex.IsMatch(lexoRank))
+            {
                 return decimal.MaxValue;
+            }
 
             if (CalculatedLexoRanks.ContainsKey(lexoRank))
             {
@@ -252,19 +291,28 @@ namespace JiraExport
         public static string CorrectRenderedHtmlvalue(object value, JiraRevision revision, bool includeJiraStyle)
         {
             if (value == null)
+            {
                 throw new ArgumentNullException(nameof(value));
+            }
+
             if (revision == null)
+            {
                 throw new ArgumentNullException(nameof(revision));
+            }
 
             var htmlValue = value.ToString();
 
             if (string.IsNullOrWhiteSpace(htmlValue))
+            {
                 return htmlValue;
+            }
 
             foreach (var attUrl in revision.AttachmentActions.Where(aa => aa.ChangeType == RevisionChangeType.Added).Select(aa => aa.Value.Url))
             {
                 if (!string.IsNullOrWhiteSpace(attUrl) && htmlValue.Contains(attUrl))
+                {
                     htmlValue = htmlValue.Replace(attUrl, attUrl);
+                }
             }
 
             htmlValue = RevisionUtility.ReplaceHtmlElements(htmlValue);
@@ -273,9 +321,13 @@ namespace JiraExport
             {
                 string css = ReadEmbeddedFile("JiraExport.jirastyles.css");
                 if (string.IsNullOrWhiteSpace(css))
+                {
                     Logger.Log(LogLevel.Warning, $"Could not read css styles for rendered field in {revision.OriginId}.");
+                }
                 else
+                {
                     htmlValue = "<style>" + css + "</style>" + htmlValue;
+                }
             }
 
             return htmlValue;

@@ -43,7 +43,7 @@ namespace WorkItemImport
 
         public WorkItem CreateWorkItem(string wiType, bool suppressNotifications, DateTime? createdDate = null, string createdBy = "")
         {
-            JsonPatchDocument patchDoc = new JsonPatchDocument
+            var patchDoc = new JsonPatchDocument
             {
                 JsonPatchDocUtils.CreateJsonFieldPatchOp(Operation.Add, WiFieldReference.Title, "[Placeholder Name]")
             };
@@ -82,7 +82,9 @@ namespace WorkItemImport
             }
 
             if (wiOut.Relations == null)
+            {
                 wiOut.Relations = new List<WorkItemRelation>();
+            }
 
             return wiOut;
         }
@@ -100,7 +102,10 @@ namespace WorkItemImport
                 return null;
             }
             if (wiOut.Relations == null)
+            {
                 wiOut.Relations = new List<WorkItemRelation>();
+            }
+
             return wiOut;
         }
 
@@ -121,7 +126,7 @@ namespace WorkItemImport
                 }
                 catch (AggregateException ex)
                 {
-                    bool errorHandled = false;
+                    var errorHandled = false;
                     foreach (Exception ex2 in ex.InnerExceptions)
                     {
                         // Handle 'VS402625' error responses, the supplied ChangedDate was older than the latest revision already in ADO.
@@ -174,7 +179,7 @@ namespace WorkItemImport
 
         public GitRepository GetRepository(string project, string repository)
         {
-            string cacheKey = $"{project}-{repository}";
+            var cacheKey = $"{project}-{repository}";
 
             // Check cache first
             if (_repositoryCache.TryGetValue(cacheKey, out var cachedRepository))
@@ -196,7 +201,9 @@ namespace WorkItemImport
         public AttachmentReference CreateAttachment(WiAttachment attachment)
         {
             using (FileStream uploadStream = File.Open(attachment.FilePath, FileMode.Open, FileAccess.Read))
+            {
                 return WitClient.CreateAttachmentAsync(uploadStream, attachment.FileName, null, null, null, new CancellationToken()).Result;
+            }
         }
     }
 }

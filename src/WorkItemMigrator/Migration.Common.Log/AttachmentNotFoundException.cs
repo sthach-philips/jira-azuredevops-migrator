@@ -7,7 +7,6 @@ namespace Migration.Common.Log
     public class AttachmentNotFoundException : Exception
     {
 
-
         public AttachmentNotFoundException(string reason)
         {
             Reason = reason;

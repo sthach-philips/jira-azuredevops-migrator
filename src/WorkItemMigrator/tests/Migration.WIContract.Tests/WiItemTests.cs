@@ -20,17 +20,16 @@ namespace Migration.WIContract.Tests
         [Test]
         public void When_calling_ToString_Then_the_expected_String_value_is_returned()
         {
-            WiItem sut = new WiItem
+            var sut = new WiItem
             {
                 Type = "type",
                 OriginId = "originId",
                 WiId = 1
             };
 
-            string expectedToString = $"[{sut.Type}]{sut.OriginId}/{sut.WiId}";
+            var expectedToString = $"[{sut.Type}]{sut.OriginId}/{sut.WiId}";
 
             Assert.That(() => sut.ToString(), Is.EqualTo(expectedToString));
-
         }
     }
 }

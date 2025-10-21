@@ -30,10 +30,14 @@ namespace JiraExport
                 _jira.RestClient.RestSharpClient.AddDefaultHeader("X-Atlassian-Token", "no-check");
 
                 if (!string.IsNullOrWhiteSpace(jiraSettings.Token))
+                {
                     _jira.RestClient.RestSharpClient.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(jiraSettings.Token, "Bearer");
+                }
 
                 if (jiraSettings.UsingJiraCloud)
+                {
                     _jira.RestClient.Settings.EnableUserPrivacyMode = true;
+                }
             }
             catch (Exception ex)
             {

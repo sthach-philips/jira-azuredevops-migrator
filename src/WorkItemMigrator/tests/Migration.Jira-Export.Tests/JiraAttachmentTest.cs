@@ -1,8 +1,6 @@
-using AutoFixture;
-
+using System.Diagnostics.CodeAnalysis;
 using JiraExport;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -10,37 +8,27 @@ namespace Migration.Jira_Export.Tests
     [ExcludeFromCodeCoverage]
     public class JiraAttachmentTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            
-        }
-
         [Test]
         public void When_calling_to_string_Then_the_expected_string_value_is_returned()
         {
-            JiraAttachment sut = new JiraAttachment
+            var sut = new JiraAttachment
             {
                 Id = "id",
                 Filename = "name"
             };
 
-            string expectedToString = $"{sut.Id}/{sut.Filename}";
+            var expectedToString = $"{sut.Id}/{sut.Filename}";
 
-            Assert.That(() => sut.ToString(), Is.EqualTo(expectedToString));
+            Assert.That(sut.ToString, Is.EqualTo(expectedToString));
         }
 
         [Test]
         public void When_calling_equals_with_two_equal_jira_attachments_Then_true_is_returned()
         {
-            JiraAttachment sut1 = new JiraAttachment();
-            JiraAttachment sut2 = new JiraAttachment();
+            var sut1 = new JiraAttachment();
+            var sut2 = new JiraAttachment();
 
-            string idString = "id";
+            const string idString = "id";
 
             sut1.Id = idString;
             sut2.Id = idString;
@@ -51,7 +39,7 @@ namespace Migration.Jira_Export.Tests
         [Test]
         public void When_calling_equals_with_null_argumentss_Then_false_is_returned()
         {
-            JiraAttachment sut = new JiraAttachment();
+            var sut = new JiraAttachment();
             Assert.That(() => sut.Equals(null), Is.False);
         }
     }

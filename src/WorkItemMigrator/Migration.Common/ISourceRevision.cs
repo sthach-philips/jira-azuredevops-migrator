@@ -6,6 +6,5 @@ namespace Migration.Common
         string Type { get; }
 
         string GetFieldValue(string fieldName);
-
     }
 }

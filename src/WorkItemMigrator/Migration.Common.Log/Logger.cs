@@ -92,7 +92,9 @@ namespace Migration.Common.Log
             if (level == LogLevel.Critical)
             {
                 if (!_errors.Contains(message))
+                {
                     _errors.Add(message);
+                }
 
                 ConsoleKey answer;
                 if (!_continueOnCritical.HasValue)
@@ -106,12 +108,16 @@ namespace Migration.Common.Log
                 }
 
                 if (answer == ConsoleKey.N)
+                {
                     throw new AbortMigrationException(message);
+                }
             }
             else if (level == LogLevel.Error)
             {
                 if (!_errors.Contains(message))
+                {
                     _errors.Add(message);
+                }
             }
             else if (level == LogLevel.Warning && !_warnings.Contains(message))
             {
@@ -130,7 +136,10 @@ namespace Migration.Common.Log
             if ((int)level >= (int)_logLevel)
             {
                 if (level == LogLevel.Debug)
+                {
                     message = $"   {message}";
+                }
+
                 ToFile(level, message);
                 ToConsole(level, message);
             }
@@ -153,16 +162,18 @@ namespace Migration.Common.Log
 
         private static void ToFile(LogLevel level, string message)
         {
-            string levelPrefix = GetPrefixFromLogLevel(level);
-            string dateTime = DateTime.Now.ToString("HH:mm:ss");
-            string log = $"[{levelPrefix}][{dateTime}] {message}";
+            var levelPrefix = GetPrefixFromLogLevel(level);
+            var dateTime = DateTime.Now.ToString("HH:mm:ss");
+            var log = $"[{levelPrefix}][{dateTime}] {message}";
             ToFile(log);
         }
 
         private static void ToFile(string message)
         {
             if (_logFilePath != null)
+            {
                 File.AppendAllText(_logFilePath, $"{message}{Environment.NewLine}");
+            }
         }
 
         private static void ToConsole(LogLevel level, string message)
@@ -172,10 +183,10 @@ namespace Migration.Common.Log
                 if ((int)level >= (int)_logLevel)
                 {
                     Console.ForegroundColor = GetColorFromLogLevel(level);
-                    string levelPrefix = GetPrefixFromLogLevel(level);
-                    string dateTime = DateTime.Now.ToString("HH:mm:ss");
+                    var levelPrefix = GetPrefixFromLogLevel(level);
+                    var dateTime = DateTime.Now.ToString("HH:mm:ss");
 
-                    string log = $"[{levelPrefix}][{dateTime}] {message}";
+                    var log = $"[{levelPrefix}][{dateTime}] {message}";
                     Console.WriteLine(log);
                 }
             }

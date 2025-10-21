@@ -49,11 +49,15 @@ namespace JiraExport
         public int CompareTo(JiraRevision other)
         {
             if (other == null)
+            {
                 return 1;
+            }
 
             int t = this.Time.CompareTo(other.Time);
             if (t != 0)
+            {
                 return t;
+            }
 
             return this.ParentItem.Key.CompareTo(other.ParentItem.Key);
         }

@@ -1,9 +1,7 @@
-using AutoFixture;
-
-using JiraExport;
-using NUnit.Framework;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using JiraExport;
+using NUnit.Framework;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -11,16 +9,6 @@ namespace Migration.Jira_Export.Tests
     [ExcludeFromCodeCoverage]
     public class JiraCommandLineTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            
-        }
-
         [Test]
         public void When_calling_execute_with_empty_args_Then_an_exception_is_thrown()
         {
@@ -28,14 +16,13 @@ namespace Migration.Jira_Export.Tests
 
             var sut = new JiraCommandLine(args);
 
-
-            Assert.That(() => sut.Run(), Throws.InstanceOf<NullReferenceException>());
+            Assert.That(sut.Run, Throws.InstanceOf<NullReferenceException>());
         }
 
         [Test]
         public void When_calling_execute_with_args_Then_run_is_executed()
         {
-            string[] args = new string[] {
+            var args = new string[] {
                 "-u",
                 "john.doe@solidify.dev",
                 "-p",

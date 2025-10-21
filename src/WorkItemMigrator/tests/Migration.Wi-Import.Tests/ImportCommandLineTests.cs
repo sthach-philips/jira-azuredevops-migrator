@@ -18,7 +18,6 @@ namespace Migration.Wi_Import.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            
         }
 
         [Test]
@@ -28,15 +27,13 @@ namespace Migration.Wi_Import.Tests
 
             var sut = new ImportCommandLine(args);
 
-
             Assert.That(() => sut.Run(), Throws.InstanceOf<NullReferenceException>());
         }
 
         [Test]
         public void When_calling_execute_with_args_Then_run_is_executed()
         {
-
-            string[] args = new string[] {
+            var args = new string[] {
                 "--token",
                 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                 "--url",

@@ -37,14 +37,16 @@ namespace Migration.WIContract
             var deserialized = JsonConvert.DeserializeObject<WiItem>(serialized, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
 
             foreach (var rev in deserialized.Revisions)
+            {
                 rev.ParentOriginId = deserialized.OriginId;
+            }
 
             return deserialized;
         }
 
         public void Save(WiItem item)
         {
-            string path = Path.Combine(_itemsDir, $"{item.OriginId}.json");
+            var path = Path.Combine(_itemsDir, $"{item.OriginId}.json");
             var serialized = JsonConvert.SerializeObject(item, Formatting.Indented);
             File.WriteAllText(path, serialized);
         }

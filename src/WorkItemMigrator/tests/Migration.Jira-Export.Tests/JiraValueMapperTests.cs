@@ -9,15 +9,13 @@ using System;
 using Newtonsoft.Json.Linq;
 using Type = Migration.Common.Config.Type;
 
-
 namespace Migration.Jira_Export.Tests
 {
-
     [TestFixture]
     public class JiraValueMapperTests
     {
         // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;        
+        private Fixture _fixture;
         private ConfigJson _config;
         private JiraItem _item;
         private IJiraProvider _provider;
@@ -26,23 +24,23 @@ namespace Migration.Jira_Export.Tests
         public void SetupValueMapperTests()
         {
             _fixture = new Fixture();
-            
+
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _config = new ConfigJson
             {
                 TypeMap = new TypeMap
                 {
-                    Types = new List<Type>
-                    {
+                    Types =
+                    [
                         new Type { Source = "Bug", Target = "Defect" },
                         new Type { Source = "Task", Target = "Work Item" }
-                    }
+                    ]
                 },
                 FieldMap = new FieldMap
                 {
-                    Fields = new List<Field>
-                    {
+                    Fields =
+                    [
                         new Field
                         {
                             Source = "Priority",
@@ -50,12 +48,12 @@ namespace Migration.Jira_Export.Tests
                             For = "All",
                             Mapping = new Mapping
                             {
-                                Values = new List<Value>
-                                {
+                                Values =
+                                [
                                     new Value { Source = "High", Target = "Critical" },
                                     new Value { Source = "Medium", Target = "Major" },
                                     new Value { Source = "Low", Target = "Minor" }
-                                }
+                                ]
                             }
                         },
                         new Field
@@ -65,13 +63,13 @@ namespace Migration.Jira_Export.Tests
                             For = "Defect",
                             Mapping = new Mapping
                             {
-                                Values = new List<Value>
-                                {
+                                Values =
+                                [
                                     new Value { Source = "Open", Target = "Active" },
                                     new Value { Source = "In Progress", Target = "In Development" },
                                     new Value { Source = "Resolved", Target = "Fixed" },
                                     new Value { Source = "Closed", Target = "Closed" }
-                                }
+                                ]
                             }
                         },
                         new Field
@@ -80,12 +78,12 @@ namespace Migration.Jira_Export.Tests
                             Target = "Mapping",
                             Mapping = null
                         }
-                    }
+                    ]
                 }
             };
 
             _provider = CreateJiraProvider();
-            string issueKey = "issue_key";
+            const string issueKey = "issue_key";
             _item = JiraItem.CreateFromRest(issueKey, _provider);
         }
 
@@ -94,8 +92,8 @@ namespace Migration.Jira_Export.Tests
         {
             // Arrange
             JiraRevision revision = null;
-            string itemSource = "Priority";
-            string itemTarget = "Severity";
+            const string itemSource = "Priority";
+            const string itemTarget = "Severity";
 
             var exportIssuesSummary = new ExportIssuesSummary();
 
@@ -108,8 +106,8 @@ namespace Migration.Jira_Export.Tests
         {
             // Arrange
             ConfigJson config = null;
-            string itemSource = "Priority";
-            string itemTarget = "Severity";
+            const string itemSource = "Priority";
+            const string itemTarget = "Severity";
             var revision = new JiraRevision(_item)
             {
                 Fields = new Dictionary<string, object>
@@ -129,8 +127,8 @@ namespace Migration.Jira_Export.Tests
         public void MapValue_WithNonExistingField_ReturnsFalseAndNull()
         {
             // Arrange
-            string itemSource = "NonExistingField";
-            string itemTarget = "Severity";
+            const string itemSource = "NonExistingField";
+            const string itemTarget = "Severity";
             var revision = new JiraRevision(_item)
             {
                 Fields = new Dictionary<string, object>
@@ -154,8 +152,8 @@ namespace Migration.Jira_Export.Tests
         public void MapValue_WithExistingFieldAndMapping_ReturnsTrueAndMappedValue()
         {
             // Arrange
-            string itemSource = "Priority";
-            string itemTarget = "Severity";
+            const string itemSource = "Priority";
+            const string itemTarget = "Severity";
             var revision = new JiraRevision(_item)
             {
                 Fields = new Dictionary<string, object>
@@ -179,9 +177,9 @@ namespace Migration.Jira_Export.Tests
         public void MapValue_WithMatchesNotForButTargetDoesNotMatch_ReturnsFalseAndNull()
         {
             // Arrange
-            string itemSource = "Status";
-            string itemTarget = "target";
-            var revision = new JiraRevision(_item)  // type is Bug by default;
+            const string itemSource = "Status";
+            const string itemTarget = "target";
+            var revision = new JiraRevision(_item)  // Note: Type is Bug by default
             {
                 Fields = new Dictionary<string, object>
                 {
@@ -191,11 +189,11 @@ namespace Migration.Jira_Export.Tests
             };
             var typeMap = new TypeMap
             {
-                Types = new List<Type>
-                {
+                Types =
+                [
                     new Type { Source = "Bug", Target = "Bug" },
                     new Type { Source = "Task", Target = "Work Item" }
-                }
+                ]
             };
             var fieldConfig = new Field
             {
@@ -204,13 +202,13 @@ namespace Migration.Jira_Export.Tests
                 NotFor = "Defect",
                 Mapping = new Mapping
                 {
-                    Values = new List<Value>
-                    {
+                    Values =
+                    [
                         new Value { Source = "Open", Target = "Active" },
                         new Value { Source = "In Progress", Target = "In Development" },
                         new Value { Source = "Resolved", Target = "Fixed" },
                         new Value { Source = "Closed", Target = "Closed" }
-                    }
+                    ]
                 }
             };
 
@@ -218,7 +216,7 @@ namespace Migration.Jira_Export.Tests
             {
                 FieldMap = new FieldMap
                 {
-                    Fields = new List<Field> { fieldConfig }
+                    Fields = [fieldConfig]
                 },
                 TypeMap = typeMap
             };
@@ -232,15 +230,14 @@ namespace Migration.Jira_Export.Tests
             Assert.IsTrue(result.Item1);
             Assert.AreNotEqual("Active", result.Item2);
             Assert.AreEqual("Open", result.Item2); // no mapping should have taken place
-
         }
 
         [Test]
         public void MapValue_WithExistingFieldAndNoMapping_ReturnsTrueAndOriginalValue()
         {
             // Arrange
-            string itemSource = "FieldWithNoMapping";
-            string itemTarget = "Target";
+            const string itemSource = "FieldWithNoMapping";
+            const string itemTarget = "Target";
             var revision = new JiraRevision(_item)
             {
                 Fields = new Dictionary<string, object>
@@ -261,9 +258,9 @@ namespace Migration.Jira_Export.Tests
             Assert.AreEqual("SourceValue", result.Item2);
         }
 
-        private JiraSettings CreateJiraSettings()
+        private static JiraSettings CreateJiraSettings()
         {
-            JiraSettings settings = new JiraSettings("userID", "pass", "token", "url", "project")
+            var settings = new JiraSettings("userID", "pass", "token", "url", "project")
             {
                 EpicLinkField = "Epic Link",
                 SprintField = "SprintField"
@@ -272,7 +269,7 @@ namespace Migration.Jira_Export.Tests
             return settings;
         }
 
-        private IJiraProvider CreateJiraProvider(JObject remoteIssue = null)
+        private static IJiraProvider CreateJiraProvider(JObject remoteIssue = null)
         {
             IJiraProvider provider = Substitute.For<IJiraProvider>();
             provider.GetSettings().ReturnsForAnyArgs(CreateJiraSettings());
@@ -281,7 +278,7 @@ namespace Migration.Jira_Export.Tests
             return provider;
         }
 
-        private JObject CreateRemoteIssueJObject(string workItemType = "Bug", string issueKey = "issue_key")
+        private static JObject CreateRemoteIssueJObject(string workItemType = "Bug", string issueKey = "issue_key")
         {
             var issueType = JObject.Parse("{ 'issuetype': {'name': '"+ workItemType +"'}}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
@@ -292,7 +289,6 @@ namespace Migration.Jira_Export.Tests
                 { "renderedFields", renderedFields },
                 { "key", issueKey }
             };
-
         }
     }
 }

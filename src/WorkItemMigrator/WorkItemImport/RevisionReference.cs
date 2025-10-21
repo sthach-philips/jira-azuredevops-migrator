@@ -10,11 +10,17 @@ namespace WorkItemImport
 
         public int CompareTo(RevisionReference other)
         {
-            int result = Time.CompareTo(other.Time);
-            if (result != 0) return result;
+            var result = Time.CompareTo(other.Time);
+            if (result != 0)
+            {
+                return result;
+            }
 
             result = OriginId.CompareTo(other.OriginId);
-            if (result != 0) return result;
+            if (result != 0)
+            {
+                return result;
+            }
 
             return RevIndex.CompareTo(other.RevIndex);
         }
@@ -26,7 +32,11 @@ namespace WorkItemImport
 
         public override bool Equals(object obj)
         {
-            if (!(obj is RevisionReference other)) return false;
+            if (!(obj is RevisionReference other))
+            {
+                return false;
+            }
+
             return Equals(other);
         }
 
@@ -68,7 +78,7 @@ namespace WorkItemImport
         {
             unchecked
             {
-                int hash = 17;
+                var hash = 17;
                 hash = hash * 23 + OriginId.GetHashCode();
                 hash = hash * 23 + RevIndex.GetHashCode();
                 return hash;

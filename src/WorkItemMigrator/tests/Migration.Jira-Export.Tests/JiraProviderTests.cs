@@ -1,12 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using AutoFixture;
-
 using JiraExport;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using RestSharp;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -21,27 +20,28 @@ namespace Migration.Jira_Export.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            
         }
 
         [Test]
         public void When_calling_getcustomid_Then_the_expected_result_is_returned()
         {
             //Arrange
-            string customFieldId = _fixture.Create<string>();
-            string propertyName = _fixture.Create<string>(); ;
+            var customFieldId = _fixture.Create<string>();
+            var propertyName = _fixture.Create<string>();
 
             var apiResponse = JArray.Parse(
                 $"[{{ 'id': 'customfield_00001', 'name': 'Story'}}, " +
                 $"{{ 'id': '{customFieldId}', 'name': '{propertyName}'}}]");
 
-            var jiraServiceMock = _fixture.Create<IJiraServiceWrapper>();
+            var jiraServiceMock = Substitute.For<IJiraServiceWrapper>();
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
-            JiraProvider sut = new JiraProvider(jiraServiceMock);
+            var sut = new JiraProvider(jiraServiceMock);
 
-            var jiraSettings = new JiraSettings("", "", "", "", "");
-            jiraSettings.JiraApiVersion = 3;
+            var jiraSettings = new JiraSettings("", "", "", "", "")
+            {
+                JiraApiVersion = 3
+            };
             sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
@@ -55,20 +55,22 @@ namespace Migration.Jira_Export.Tests
         public void When_calling_getcustomid_the_key_matches_Then_the_expected_result_is_returned()
         {
             //Arrange
-            string customFieldId = _fixture.Create<string>(); ;
-            string propertyName = _fixture.Create<string>(); ;
+            var customFieldId = _fixture.Create<string>();
+            var propertyName = _fixture.Create<string>();
 
             var apiResponse = JArray.Parse(
                 $"[{{ 'id': 'customfield_00001', 'key': 'Story'}}, " +
                 $"{{ 'id': '{customFieldId}', 'key': '{propertyName}'}}]");
 
-            var jiraServiceMock = _fixture.Create<IJiraServiceWrapper>();
+            var jiraServiceMock = Substitute.For<IJiraServiceWrapper>();
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
-            JiraProvider sut = new JiraProvider(jiraServiceMock);
+            var sut = new JiraProvider(jiraServiceMock);
 
-            var jiraSettings = new JiraSettings("", "", "", "", "");
-            jiraSettings.JiraApiVersion = 3;
+            var jiraSettings = new JiraSettings("", "", "", "", "")
+            {
+                JiraApiVersion = 3
+            };
             sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
@@ -82,19 +84,21 @@ namespace Migration.Jira_Export.Tests
         public void When_calling_getcustomid_and_nothing_matches_Then_null_is_returned()
         {
             //Arrange
-            string propertyName = "does_not_exist";
+            const string propertyName = "does_not_exist";
 
             var apiResponse = JArray.Parse(
                 $"[{{ 'id': 'customfield_00001', 'key': 'Story'}}, " +
                 $"{{ 'id': 'customfield_00002', 'key': 'Sprint'}}]");
 
-            var jiraServiceMock = _fixture.Create<IJiraServiceWrapper>();
+            var jiraServiceMock = Substitute.For<IJiraServiceWrapper>();
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
-            JiraProvider sut = new JiraProvider(jiraServiceMock);
+            var sut = new JiraProvider(jiraServiceMock);
 
-            var jiraSettings = new JiraSettings("", "", "", "", "");
-            jiraSettings.JiraApiVersion = 3;
+            var jiraSettings = new JiraSettings("", "", "", "", "")
+            {
+                JiraApiVersion = 3
+            };
             sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
@@ -108,20 +112,22 @@ namespace Migration.Jira_Export.Tests
         public void When_calling_getcustomid_and_multiple_fields_with_the_same_name_exist_Then_the_first_result_is_returned()
         {
             //Arrange
-            string firstId = "customfield_00001";
-            string fieldname = _fixture.Create<string>();
+            const string firstId = "customfield_00001";
+            var fieldname = _fixture.Create<string>();
 
             var apiResponse = JArray.Parse(
                 $"[{{ 'id': 'customfield_00001', 'name': '{fieldname}'}}, " +
                 $"{{ 'id': 'customfield_00002', 'name': '{fieldname}'}}]");
 
-            var jiraServiceMock = _fixture.Create<IJiraServiceWrapper>();
+            var jiraServiceMock = Substitute.For<IJiraServiceWrapper>();
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
-            JiraProvider sut = new JiraProvider(jiraServiceMock);
+            var sut = new JiraProvider(jiraServiceMock);
 
-            var jiraSettings = new JiraSettings("", "", "", "", "");
-            jiraSettings.JiraApiVersion = 3;
+            var jiraSettings = new JiraSettings("", "", "", "", "")
+            {
+                JiraApiVersion = 3
+            };
             sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act
@@ -135,22 +141,24 @@ namespace Migration.Jira_Export.Tests
         public void When_calling_getcustomid_multiple_times_Then_the_api_is_called_once()
         {
             //Arrange
-            string customFieldId1 = _fixture.Create<string>(); ;
-            string customFieldId2 = _fixture.Create<string>(); ;
-            string propertyName1 = _fixture.Create<string>(); ;
-            string propertyName2 = _fixture.Create<string>(); ;
+            var customFieldId1 = _fixture.Create<string>();
+            var customFieldId2 = _fixture.Create<string>();
+            var propertyName1 = _fixture.Create<string>();
+            var propertyName2 = _fixture.Create<string>();
 
             var apiResponse = JArray.Parse(
                 $"[{{ 'id': '{customFieldId1}', 'key': '{propertyName1}'}}, " +
                 $"{{ 'id': '{customFieldId2}', 'key': '{propertyName2}'}}]");
 
-            var jiraServiceMock = _fixture.Create<IJiraServiceWrapper>();
+            var jiraServiceMock = Substitute.For<IJiraServiceWrapper>();
             jiraServiceMock.RestClient.ExecuteRequestAsync(Method.GET, Arg.Any<string>()).Returns(apiResponse);
 
-            JiraProvider sut = new JiraProvider(jiraServiceMock);
+            var sut = new JiraProvider(jiraServiceMock);
 
-            var jiraSettings = new JiraSettings("", "", "", "", "");
-            jiraSettings.JiraApiVersion = 3;
+            var jiraSettings = new JiraSettings("", "", "", "", "")
+            {
+                JiraApiVersion = 3
+            };
             sut.Initialize(jiraSettings, new ExportIssuesSummary());
 
             //Act

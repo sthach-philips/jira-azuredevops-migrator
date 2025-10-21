@@ -36,7 +36,9 @@ namespace WorkItemImport
             get
             {
                 if (_wiClient == null)
+                {
                     _wiClient = RestConnection.GetClient<WebApi.WorkItemTrackingHttpClient>();
+                }
 
                 return _wiClient;
             }
@@ -65,7 +67,9 @@ namespace WorkItemImport
             try
             {
                 if (rev.Index == 0)
+                {
                     _witClientUtils.EnsureClassificationFields(rev);
+                }
 
                 _witClientUtils.EnsureDateFields(rev, wi);
                 _witClientUtils.EnsureAuthorFields(rev);
@@ -76,19 +80,29 @@ namespace WorkItemImport
 
                 var attachmentMap = new Dictionary<string, WiAttachment>();
                 if (rev.Attachments.Any() && !_witClientUtils.ApplyAttachments(rev, wi, attachmentMap, _context.Journal.IsAttachmentMigrated))
+                {
                     incomplete = true;
+                }
 
                 if (rev.Fields.Any() && !UpdateWIFields(rev.Fields, wi))
+                {
                     incomplete = true;
+                }
 
                 if (rev.Fields.Any() && !UpdateWIHistoryField(rev.Fields, wi))
+                {
                     incomplete = true;
+                }
 
                 if (rev.Links.Any() && !ApplyAndSaveLinks(rev, wi, settings))
+                {
                     incomplete = true;
+                }
 
                 if (incomplete)
+                {
                     Logger.Log(LogLevel.Warning, $"'{rev}' - not all changes were saved.");
+                }
 
                 if (wi.Fields.ContainsKey(WiFieldReference.History) && !string.IsNullOrEmpty(wi.Fields[WiFieldReference.History].ToString()))
                 {
@@ -98,10 +112,12 @@ namespace WorkItemImport
 
                 _witClientUtils.SaveWorkItemAttachments(rev, wi, settings);
 
-                foreach (string attOriginId in rev.Attachments.Select(wiAtt => wiAtt.AttOriginId))
+                foreach (var attOriginId in rev.Attachments.Select(wiAtt => wiAtt.AttOriginId))
                 {
                     if (attachmentMap.TryGetValue(attOriginId, out WiAttachment tfsAtt))
+                    {
                         _context.Journal.MarkAttachmentAsProcessed(attOriginId, tfsAtt.AttOriginId);
+                    }
                 }
 
                 if (rev.Attachments.Exists(a => a.Change == ReferenceChangeType.Added) && rev.AttachmentReferences)
@@ -224,7 +240,9 @@ namespace WorkItemImport
         {
             var restConnection = EstablishRestConnection(settings);
             if (restConnection == null)
+            {
                 return null;
+            }
 
             var agent = new Agent(context, settings, restConnection);
 
@@ -239,7 +257,7 @@ namespace WorkItemImport
                 return null;
             }
 
-            (var iterationCache, int rootIteration) = agent.CreateClasificationCacheAsync(settings.Project, TreeStructureGroup.Iterations).Result;
+            (var iterationCache, var rootIteration) = agent.CreateClasificationCacheAsync(settings.Project, TreeStructureGroup.Iterations).Result;
             if (iterationCache == null)
             {
                 Logger.Log(LogLevel.Critical, "Could not build iteration cache.");
@@ -249,7 +267,7 @@ namespace WorkItemImport
             agent.IterationCache = iterationCache;
             agent.RootIteration = rootIteration;
 
-            (var areaCache, int rootArea) = agent.CreateClasificationCacheAsync(settings.Project, TreeStructureGroup.Areas).Result;
+            (var areaCache, var rootArea) = agent.CreateClasificationCacheAsync(settings.Project, TreeStructureGroup.Areas).Result;
             if (areaCache == null)
             {
                 Logger.Log(LogLevel.Critical, "Could not build area cache.");
@@ -298,7 +316,9 @@ namespace WorkItemImport
             }
 
             if (project == null)
+            {
                 project = await CreateProject(Settings.Project, $"{Settings.ProcessTemplate} project for Jira migration", Settings.ProcessTemplate);
+            }
 
             return project;
         }
@@ -309,12 +329,14 @@ namespace WorkItemImport
             Console.WriteLine("Would you like to create one? (Y/N)");
             var answer = Console.ReadKey();
             if (answer.KeyChar != 'Y' && answer.KeyChar != 'y')
+            {
                 return null;
+            }
 
             Logger.Log(LogLevel.Info, $"Creating project '{projectName}'.");
 
             // Setup version control properties
-            Dictionary<string, string> versionControlProperties = new Dictionary<string, string>
+            var versionControlProperties = new Dictionary<string, string>
             {
                 [TeamProjectCapabilitiesConstants.VersionControlCapabilityAttributeName] = SourceControlTypes.Git.ToString()
             };
@@ -323,20 +345,20 @@ namespace WorkItemImport
             ProcessHttpClient processClient = RestConnection.GetClient<ProcessHttpClient>();
             Guid processId = processClient.GetProcessesAsync().Result.Find(process => { return process.Name.Equals(processName, StringComparison.InvariantCultureIgnoreCase); }).Id;
 
-            Dictionary<string, string> processProperaties = new Dictionary<string, string>
+            var processProperaties = new Dictionary<string, string>
             {
                 [TeamProjectCapabilitiesConstants.ProcessTemplateCapabilityTemplateTypeIdAttributeName] = processId.ToString()
             };
 
             // Construct capabilities dictionary
-            Dictionary<string, Dictionary<string, string>> capabilities = new Dictionary<string, Dictionary<string, string>>
+            var capabilities = new Dictionary<string, Dictionary<string, string>>
             {
                 [TeamProjectCapabilitiesConstants.VersionControlCapabilityName] = versionControlProperties,
                 [TeamProjectCapabilitiesConstants.ProcessTemplateCapabilityName] = processProperaties
             };
 
             // Construct object containing properties needed for creating the project
-            TeamProject projectCreateParameters = new TeamProject()
+            var projectCreateParameters = new TeamProject()
             {
                 Name = projectName,
                 Description = projectDescription,
@@ -386,7 +408,7 @@ namespace WorkItemImport
         {
             OperationsHttpClient operationsClient = RestConnection.GetClient<OperationsHttpClient>();
             DateTime expiration = DateTime.Now.AddSeconds(maxTimeInSeconds);
-            int checkCount = 0;
+            var checkCount = 0;
 
             while (true)
             {
@@ -424,7 +446,9 @@ namespace WorkItemImport
                 if (all.Children != null && all.Children.Any())
                 {
                     foreach (var iteration in all.Children)
+                    {
                         CreateClasificationCacheRec(iteration, clasificationCache, "");
+                    }
                 }
 
                 return (clasificationCache, all.Id);
@@ -438,14 +462,16 @@ namespace WorkItemImport
 
         private void CreateClasificationCacheRec(WorkItemClassificationNode current, Dictionary<string, int> agg, string parentPath)
         {
-            string fullName = !string.IsNullOrWhiteSpace(parentPath) ? parentPath + "/" + current.Name : current.Name;
+            var fullName = !string.IsNullOrWhiteSpace(parentPath) ? parentPath + "/" + current.Name : current.Name;
 
             agg.Add(fullName, current.Id);
             Logger.Log(LogLevel.Debug, $"{(current.StructureType == TreeNodeStructureType.Iteration ? "Iteration" : "Area")} '{fullName}' added to cache");
             if (current.Children != null)
             {
                 foreach (var node in current.Children)
+                {
                     CreateClasificationCacheRec(node, agg, fullName);
+                }
             }
         }
 
@@ -464,8 +490,8 @@ namespace WorkItemImport
             var name = pathSplit[pathSplit.Length - 1];
             var parent = string.Join("/", pathSplit.Take(pathSplit.Length - 1));
 
-            string nameMapped = "";
-            string fullNameMapped = "";
+            var nameMapped = "";
+            var fullNameMapped = "";
 
             if (structureGroup == TreeStructureGroup.Iterations)
             {
@@ -483,14 +509,18 @@ namespace WorkItemImport
             }
 
             if (!string.IsNullOrEmpty(parent))
+            {
                 EnsureClasification(parent, structureGroup);
+            }
 
             var cache = structureGroup == TreeStructureGroup.Iterations ? IterationCache : AreaCache;
 
             lock (cache)
             {
-                if (cache.TryGetValue(fullNameMapped, out int id))
+                if (cache.TryGetValue(fullNameMapped, out var id))
+                {
                     return fullNameMapped;
+                }
 
                 WorkItemClassificationNode node = null;
 
@@ -520,9 +550,9 @@ namespace WorkItemImport
         {
             if (!dictionary.ContainsKey(name))
             {
-                string nameUpdated = name;
-                bool newSprintNameInIterationPathCaseInvariant = false;
-                int suffix = 0;
+                var nameUpdated = name;
+                var newSprintNameInIterationPathCaseInvariant = false;
+                var suffix = 0;
                 while (!newSprintNameInIterationPathCaseInvariant)
                 {
                     if (!DictionaryContainsValueCaseInvariant(dictionary, nameUpdated))
@@ -550,7 +580,6 @@ namespace WorkItemImport
             return false;
         }
 
-
         #endregion
 
         #region Import Revision
@@ -575,7 +604,6 @@ namespace WorkItemImport
                     var fieldRef = fieldRev.ReferenceName;
                     var fieldValue = fieldRev.Value;
 
-
                     switch (fieldRef)
                     {
                         case var s when s.Equals(WiFieldReference.IterationPath, StringComparison.InvariantCultureIgnoreCase):
@@ -585,14 +613,18 @@ namespace WorkItemImport
                             if (!string.IsNullOrWhiteSpace((string)fieldValue))
                             {
                                 if (string.IsNullOrWhiteSpace(iterationPath))
+                                {
                                     iterationPath = (string)fieldValue;
+                                }
                                 else
+                                {
                                     iterationPath = string.Join("/", iterationPath, (string)fieldValue);
+                                }
                             }
 
                             if (!string.IsNullOrWhiteSpace(iterationPath))
                             {
-                                string iterationPathMapped = EnsureClasification(iterationPath, TreeStructureGroup.Iterations);
+                                var iterationPathMapped = EnsureClasification(iterationPath, TreeStructureGroup.Iterations);
                                 wi.Fields[WiFieldReference.IterationPath] = $@"{Settings.Project}\{iterationPathMapped}".Replace("/", @"\");
                             }
                             else
@@ -609,14 +641,18 @@ namespace WorkItemImport
                             if (!string.IsNullOrWhiteSpace((string)fieldValue))
                             {
                                 if (string.IsNullOrWhiteSpace(areaPath))
+                                {
                                     areaPath = (string)fieldValue;
+                                }
                                 else
+                                {
                                     areaPath = string.Join("/", areaPath, (string)fieldValue);
+                                }
                             }
 
                             if (!string.IsNullOrWhiteSpace(areaPath))
                             {
-                                string areaPathMapped = EnsureClasification(areaPath, TreeStructureGroup.Areas);
+                                var areaPathMapped = EnsureClasification(areaPath, TreeStructureGroup.Areas);
                                 wi.Fields[WiFieldReference.AreaPath] = $@"{Settings.Project}\{areaPathMapped}".Replace("/", @"\");
                             }
                             else
@@ -658,7 +694,7 @@ namespace WorkItemImport
 
         private bool ApplyAndSaveLinks(WiRevision rev, WorkItem wi, Settings settings)
         {
-            bool success = true;
+            var success = true;
 
             var saveLinkTimestamp = rev.Time;
             if(rev.Fields.Count > 0)
@@ -670,13 +706,13 @@ namespace WorkItemImport
                 wi.Fields[WiFieldReference.ChangedDate] = saveLinkTimestamp.AddMilliseconds(2);
             }
             
-            for (int i = 0; i < rev.Links.Count; i++)
+            for (var i = 0; i < rev.Links.Count; i++)
             {
                 var link = rev.Links[i];
                 try
                 {
-                    int sourceWiId = _context.Journal.GetMigratedId(link.SourceOriginId);
-                    int targetWiId = _context.Journal.GetMigratedId(link.TargetOriginId);
+                    var sourceWiId = _context.Journal.GetMigratedId(link.SourceOriginId);
+                    var targetWiId = _context.Journal.GetMigratedId(link.TargetOriginId);
 
                     link.SourceWiId = sourceWiId;
                     link.TargetWiId = targetWiId;
@@ -719,9 +755,13 @@ namespace WorkItemImport
             if (settings.IncludeLinkComments)
             {
                 if (rev.Links.Exists(l => l.Change == ReferenceChangeType.Removed))
+                {
                     wi.Fields[WiFieldReference.History] = $"Removed link(s): {string.Join(";", rev.Links.Where(l => l.Change == ReferenceChangeType.Removed).Select(l => l.ToString()))}";
+                }
                 else if (rev.Links.Exists(l => l.Change == ReferenceChangeType.Added))
+                {
                     wi.Fields[WiFieldReference.History] = $"Added link(s): {string.Join(";", rev.Links.Where(l => l.Change == ReferenceChangeType.Added).Select(l => l.ToString()))}";
+                }
             }
 
             return success;

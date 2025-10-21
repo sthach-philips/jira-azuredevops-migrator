@@ -16,13 +16,15 @@ namespace Migration.Common
         protected virtual string MapUser(string sourceUser)
         {
             if (sourceUser == null)
+            {
                 return sourceUser;
+            }
 
-            if (UserMapping.TryGetValue(sourceUser, out string wiUser))
+            if (UserMapping.TryGetValue(sourceUser, out var wiUser))
             {
                 return wiUser;
             }
-            else if (UserMapping.TryGetValue("*", out string defaultUser))
+            else if (UserMapping.TryGetValue("*", out var defaultUser))
             {
                 Logger.Log(LogLevel.Warning, $"Could not find user '{sourceUser}' identity in user map. Using default identity '{defaultUser}'.");
                 return defaultUser;
@@ -41,8 +43,12 @@ namespace Migration.Common
             foreach (var mapping in mappings)
             {
                 foreach (var m in mapping)
+                {
                     if (!merged.ContainsKey(m.Key))
+                    {
                         merged[m.Key] = m.Value;
+                    }
+                }
             }
             return merged;
         }

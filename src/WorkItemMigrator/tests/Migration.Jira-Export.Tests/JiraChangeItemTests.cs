@@ -1,9 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoFixture;
-
 using JiraExport;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -18,7 +17,6 @@ namespace Migration.Jira_Export.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            
         }
 
         [Test]
@@ -26,7 +24,7 @@ namespace Migration.Jira_Export.Tests
         {
             JObject jobj = _fixture.Create<JObject>();
 
-            JiraChangeItem sut = new JiraChangeItem(jobj);
+            var sut = new JiraChangeItem(jobj);
 
             Assert.That(sut, Is.Not.Null);
         }

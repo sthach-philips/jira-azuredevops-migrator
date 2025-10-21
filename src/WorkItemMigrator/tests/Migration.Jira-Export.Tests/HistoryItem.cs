@@ -15,7 +15,7 @@ namespace Migration.Jira_Export.Tests
         public string From { get; set; } = string.Empty;
         public string FromString { get; set; } = string.Empty;
         public string To { get; set; } = string.Empty;
-        public new string ToString { get; set; } = string.Empty;
+        public string ToStringValue { get; set; } = string.Empty;
 
         public JObject ToJObject()
         {
@@ -31,18 +31,15 @@ namespace Migration.Jira_Export.Tests
                   'from': {FormatJsonValue(From)},
                   'fromString': {FormatJsonValue(FromString)},
                   'to': {FormatJsonValue(To)},
-                  'toString': {FormatJsonValue(ToString)},
+                  'toString': {FormatJsonValue(ToStringValue)},
                 }}
               ]
             }}");
         }
 
-        private string FormatJsonValue(string value)
+        private static string FormatJsonValue(string value)
         {
-            if (value == null)
-                return "null";
-            else
-                return $"'{value}'";
+            return value == null ? "null" : $"'{value}'";
         }
     }
 }

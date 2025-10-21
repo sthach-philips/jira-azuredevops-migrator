@@ -133,7 +133,9 @@ namespace JiraExport
         {
             var issue = JiraItem.CreateFromRest(issueKey, this);
             if (issue == null)
+            {
                 return default(JiraItem);
+            }
 
             skipList.Add(issue.Key);
             return issue;
@@ -167,7 +169,9 @@ namespace JiraExport
             if (att != null)
             {
                 if (string.IsNullOrWhiteSpace(att.Url))
+                {
                     att = await GetAttachmentInfo(att.Id);
+                }
 
                 if (att != null && !string.IsNullOrWhiteSpace(att.Url))
                 {
@@ -215,7 +219,9 @@ namespace JiraExport
         private void EnsurePath(string path)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException(nameof(path));
+            }
 
             var dir = Path.GetDirectoryName(path);
             Directory.CreateDirectory(dir);
@@ -290,7 +296,9 @@ namespace JiraExport
                         var issue = ProcessItem(issueKey, skipList);
 
                         if (issue == null)
+                        {
                             continue;
+                        }
 
                         yield return issue;
                         index++;
@@ -377,7 +385,9 @@ namespace JiraExport
                         var issue = ProcessItem(issueKey, skipList);
 
                         if (issue == null)
+                        {
                             continue;
+                        }
 
                         yield return issue;
                         index++;

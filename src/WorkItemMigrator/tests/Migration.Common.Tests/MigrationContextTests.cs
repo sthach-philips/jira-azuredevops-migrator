@@ -1,9 +1,7 @@
-using AutoFixture;
-
-using Common.Config;
-using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Common.Config;
+using NUnit.Framework;
 
 namespace Migration.Common.Tests
 {
@@ -11,19 +9,10 @@ namespace Migration.Common.Tests
     [ExcludeFromCodeCoverage]
     public class MigrationContextTests
     {
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-
-        }
-
         [Test]
         public void When_initializing_migration_context_Then_folder_paths_are_correct()
         {
-            ConfigJson config = new ConfigJson
+            var config = new ConfigJson
             {
                 AttachmentsFolder = "AttachmentsFolder",
                 UserMappingFile = "UserMappingFile",
@@ -36,10 +25,6 @@ namespace Migration.Common.Tests
                 Assert.That(MigrationContext.Instance.AttachmentsPath, Is.EqualTo(Path.Combine(config.Workspace, config.AttachmentsFolder)));
                 Assert.That(MigrationContext.Instance.UserMappingPath, Is.EqualTo(Path.Combine(config.Workspace, config.UserMappingFile)));
             });
-
         }
-
     }
 }
-
-

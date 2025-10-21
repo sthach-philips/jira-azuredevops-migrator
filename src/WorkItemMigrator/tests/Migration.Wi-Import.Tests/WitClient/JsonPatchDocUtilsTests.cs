@@ -21,7 +21,6 @@ namespace Migration.Wi_Import.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-            
         }
 
         [Test]
@@ -43,8 +42,8 @@ namespace Migration.Wi_Import.Tests
         [Test]
         public void When_calling_create_json_field_patch_op_Then_a_correct_op_is_returned()
         {
-            string key = "key";
-            string value = "value";
+            var key = "key";
+            var value = "value";
             JsonPatchOperation jsonPatchOp = JsonPatchDocUtils.CreateJsonFieldPatchOp(Operation.Add, key, value);
 
             Assert.Multiple(() =>
@@ -58,11 +57,11 @@ namespace Migration.Wi_Import.Tests
         [Test]
         public void When_calling_create_json_artifact_link_field_patch_op_Then_a_correct_op_is_returned()
         {
-            string projectId = Guid.NewGuid().ToString();
-            string repositoryId = Guid.NewGuid().ToString();
-            string commitId = Guid.NewGuid().ToString();
+            var projectId = Guid.NewGuid().ToString();
+            var repositoryId = Guid.NewGuid().ToString();
+            var commitId = Guid.NewGuid().ToString();
             JsonPatchOperation jsonPatchOp = JsonPatchDocUtils.CreateJsonArtifactLinkPatchOp(Operation.Add, projectId, repositoryId, commitId, "Commit");
-            PatchOperationValue artifactLink = jsonPatchOp.Value as PatchOperationValue;
+            var artifactLink = jsonPatchOp.Value as PatchOperationValue;
 
             Assert.Multiple(() =>
             {

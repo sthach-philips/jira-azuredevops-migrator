@@ -35,7 +35,9 @@ namespace JiraExport
         internal WiItem Map(JiraItem issue)
         {
             if (issue == null)
+            {
                 throw new ArgumentNullException(nameof(issue));
+            }
 
             var wiItem = new WiItem();
 
@@ -71,7 +73,9 @@ namespace JiraExport
             foreach (var targetType in _targetTypes)
             {
                 if (!typeFields.ContainsKey(targetType))
+                {
                     typeFields.Add(targetType, new FieldMapping<JiraRevision>());
+                }
             }
 
             foreach (var item in _config.FieldMap.Fields)
@@ -80,7 +84,9 @@ namespace JiraExport
                 {
                     var isCustomField = item.SourceType == "name";
                     if (isCustomField && _jiraProvider.GetCustomId(item.Source) == null)
+                    {
                         Logger.Log(LogLevel.Warning, $"Could not find the field id for '{item.Source}', please check the field mapping!");
+                    }
 
                     Func<JiraRevision, (bool, object)> value;
 
@@ -192,7 +198,9 @@ namespace JiraExport
         internal WiDevelopmentLink MapDevelopmentLink(JiraRevision jiraRevision)
         {
             if (jiraRevision == null)
+            {
                 throw new ArgumentNullException(nameof(jiraRevision));
+            }
 
             if (jiraRevision.DevelopmentLink == null)
             {
@@ -226,11 +234,15 @@ namespace JiraExport
         internal List<WiLink> MapLinks(JiraRevision r)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
             var links = new List<WiLink>();
             if (r.LinkActions == null)
+            {
                 return links;
+            }
 
             // map issue links
             foreach (var jiraLinkAction in r.LinkActions)
@@ -276,11 +288,15 @@ namespace JiraExport
         internal List<WiAttachment> MapAttachments(JiraRevision rev)
         {
             if (rev == null)
+            {
                 throw new ArgumentNullException(nameof(rev));
+            }
 
             var attachments = new List<WiAttachment>();
             if (rev.AttachmentActions == null)
+            {
                 return attachments;
+            }
 
             _jiraProvider.DownloadAttachments(rev).Wait();
 
@@ -304,7 +320,9 @@ namespace JiraExport
         internal List<WiField> MapFields(JiraRevision r)
         {
             if (r == null)
+            {
                 throw new ArgumentNullException(nameof(r));
+            }
 
             var fields = new List<WiField>();
 
@@ -373,7 +391,9 @@ namespace JiraExport
         protected override string MapUser(string sourceUser)
         {
             if (string.IsNullOrWhiteSpace(sourceUser))
+            {
                 return null;
+            }
 
             var email = _jiraProvider.GetUserEmail(sourceUser);
             return base.MapUser(email);
@@ -466,7 +486,11 @@ namespace JiraExport
 
         internal object TruncateField(object value, string field)
         {
-            if (value == null) return value;
+            if (value == null)
+            {
+                return value;
+            }
+
             string valueStr = value.ToString();
             var fieldLimits = new Dictionary<string, int>()
             {

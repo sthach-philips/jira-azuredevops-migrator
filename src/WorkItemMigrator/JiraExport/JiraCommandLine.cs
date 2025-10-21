@@ -127,7 +127,9 @@ namespace JiraExport
                 foreach (var issue in issues)
                 {
                     if (issue == null)
+                    {
                         continue;
+                    }
 
                     WiItem wiItem = mapper.Map(issue);
                     if (wiItem != null)

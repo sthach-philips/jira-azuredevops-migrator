@@ -16,19 +16,18 @@ namespace Migration.WIContract.Tests
         public void Setup()
         {
             _fixture = new Fixture();
-
         }
 
         [Test]
         public void When_calling_ToString_Then_the_expected_String_value_is_returned()
         {
-            WiRevision sut = new WiRevision
+            var sut = new WiRevision
             {
                 ParentOriginId = "parentOriginId",
                 Index = 1
             };
 
-            string expectedToString = $"'{sut.ParentOriginId}', rev {sut.Index}";
+            var expectedToString = $"'{sut.ParentOriginId}', rev {sut.Index}";
 
             Assert.That(() => sut.ToString(), Is.EqualTo(expectedToString));
         }

@@ -41,7 +41,9 @@ namespace Migration.Common
             Instance.Provider = new WiItemProvider(Instance.MigrationWorkspace);
 
             if (!Directory.Exists(Instance.AttachmentsPath))
+            {
                 Directory.CreateDirectory(Instance.AttachmentsPath);
+            }
 
             return Instance;
         }

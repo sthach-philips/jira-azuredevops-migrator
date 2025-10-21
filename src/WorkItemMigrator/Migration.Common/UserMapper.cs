@@ -16,7 +16,7 @@ namespace Migration.Common
             }
             else
             {
-                string[] userMappings = File.ReadAllLines(userMappingPath);
+                var userMappings = File.ReadAllLines(userMappingPath);
                 internalUserMapping = ParseUserMappings(userMappings);
             }
 
@@ -32,17 +32,20 @@ namespace Migration.Common
                 var userMappingParts = userMapping.Split('=');
                 if (userMappingParts.Length == 2)
                 {
-                    string jiraUser = userMappingParts[0].Trim();
-                    string wiUser = userMappingParts[1].Trim();
+                    var jiraUser = userMappingParts[0].Trim();
+                    var wiUser = userMappingParts[1].Trim();
 
                     if (!internalUserMapping.ContainsKey(jiraUser))
+                    {
                         internalUserMapping.Add(jiraUser, wiUser);
+                    }
                     else
+                    {
                         Logger.Log(LogLevel.Warning, $"Duplicate mapping found {jiraUser}={wiUser} in user mapping configuration file");
+                    }
                 }
             }
             return internalUserMapping;
-
         }
     }
 }

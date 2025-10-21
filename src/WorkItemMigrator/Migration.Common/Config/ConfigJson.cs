@@ -92,6 +92,5 @@ namespace Common.Config
 
         [JsonProperty(PropertyName = "jira-api-version")]
         public int JiraApiVersion { get; set; } = 3;
-
     }
 }

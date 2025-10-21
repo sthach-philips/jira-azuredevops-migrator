@@ -13,7 +13,9 @@ namespace Migration.Common
         public static DateTime NextValidDeltaRev(DateTime current, DateTime? next = null)
         {
             if (next == null || current + _deltaTime < next)
+            {
                 return current + _deltaTime;
+            }
 
             TimeSpan diff = next.Value - current;
             var middle = new TimeSpan(diff.Ticks / 2);
@@ -22,31 +24,38 @@ namespace Migration.Common
 
         public static string ReplaceHtmlElements(string html)
         {
-            string imageWrapPattern = "<span class=\"image-wrap\".*?>.*?(<img .*? />).*?</span>";
+            var imageWrapPattern = "<span class=\"image-wrap\".*?>.*?(<img .*? />).*?</span>";
             html = Regex.Replace(html, imageWrapPattern, m => m.Groups[1]?.Value);
 
-            string userLinkPattern = "<a href=.*? class=\"user-hover\" .*?>(.*?)</a>";
+            var userLinkPattern = "<a href=.*? class=\"user-hover\" .*?>(.*?)</a>";
             html = Regex.Replace(html, userLinkPattern, m => m.Groups[1]?.Value);
 
             return html;
         }
 
-
         public static T GetFieldValueOrDefault<T>(this List<WiField> fields, string refName)
         {
             if (fields == null)
+            {
                 return default;
+            }
 
             if (fields.Count == 0)
+            {
                 return default;
+            }
 
             var value = fields.Find(x => x.ReferenceName.Equals(refName));
 
             if (value == null)
+            {
                 return default;
+            }
 
             if (value.Value == null)
+            {
                 return default;
+            }
 
             return (T)value.Value;
         }
@@ -54,16 +63,21 @@ namespace Migration.Common
         public static bool HasAnyByRefName(this List<WiField> fields, string refName)
         {
             if (fields == null)
+            {
                 return false;
+            }
 
             if (fields.Count == 0)
+            {
                 return false;
+            }
 
             if (fields.Exists(f => f.ReferenceName.Equals(refName, StringComparison.InvariantCultureIgnoreCase)))
+            {
                 return true;
+            }
 
             return false;
         }
-
     }
 }

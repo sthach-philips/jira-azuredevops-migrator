@@ -49,8 +49,8 @@ namespace WorkItemImport
 
             commandLineApplication.OnExecute(() =>
             {
-                bool forceFresh = forceOption.HasValue();
-                bool succeeded = true;
+                var forceFresh = forceOption.HasValue();
+                var succeeded = true;
                 if (configOption.HasValue())
                 {
                     succeeded = ExecuteMigration(tokenOption, urlOption, configOption, forceFresh, continueOnCriticalOption);
@@ -72,12 +72,12 @@ namespace WorkItemImport
             var importedItems = 0;
             var sw = new Stopwatch();
             sw.Start();
-            bool succeeded = true;
+            var succeeded = true;
 
             try
             {
-                string configFileName = configFile.Value();
-                ConfigReaderJson configReaderJson = new ConfigReaderJson(configFileName);
+                var configFileName = configFile.Value();
+                var configReaderJson = new ConfigReaderJson(configFileName);
                 config = configReaderJson.Deserialize();
 
                 var context = MigrationContext.Init("wi-import", config, config.LogLevel, forceFresh, continueOnCritical.Value());

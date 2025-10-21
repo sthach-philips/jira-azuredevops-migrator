@@ -47,7 +47,9 @@ namespace WorkItemImport
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         public bool TryPeek(out ExecutionItem nextItem)
@@ -59,7 +61,9 @@ namespace WorkItemImport
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
     }
 }

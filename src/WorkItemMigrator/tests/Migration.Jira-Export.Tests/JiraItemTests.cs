@@ -1,16 +1,15 @@
-using Atlassian.Jira;
-using Atlassian.Jira.Remote;
-using AutoFixture;
-
-using JiraExport;
-using Newtonsoft.Json.Linq;
-using NSubstitute;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web;
+using Atlassian.Jira;
+using Atlassian.Jira.Remote;
+using AutoFixture;
+using JiraExport;
+using Newtonsoft.Json.Linq;
+using NSubstitute;
+using NUnit.Framework;
 
 namespace Migration.Jira_Export.Tests
 {
@@ -18,25 +17,17 @@ namespace Migration.Jira_Export.Tests
     [ExcludeFromCodeCoverage]
     public class JiraItemTests
     {
-        // use auto fixture to help mock and instantiate with dummy data with nsubsitute. 
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            
-        }
+        private static readonly Fixture _fixture = new();
 
         [Test]
         public void When_an_attachment_is_added_Then_it_will_be_migrated()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string attachmentId = _fixture.Create<int>().ToString();
-            string attachmentName = _fixture.Create<string>();
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var attachmentId = _fixture.Create<int>().ToString();
+            var attachmentName = _fixture.Create<string>();
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }},
@@ -63,11 +54,11 @@ namespace Migration.Jira_Export.Tests
                     From = null,
                     FromString = null,
                     To = attachmentId,
-                    ToString = attachmentName
+                    ToStringValue = attachmentName
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -97,11 +88,11 @@ namespace Migration.Jira_Export.Tests
         public void When_an_attachment_is_added_and_removed_Then_it_cannot_be_migrated_and_is_omitted()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string attachmentId = _fixture.Create<int>().ToString();
-            string attachmentName = _fixture.Create<string>();
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var attachmentId = _fixture.Create<int>().ToString();
+            var attachmentName = _fixture.Create<string>();
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }}
@@ -116,7 +107,7 @@ namespace Migration.Jira_Export.Tests
                     From = null,
                     FromString = null,
                     To = attachmentId,
-                    ToString = attachmentName
+                    ToStringValue = attachmentName
                 }.ToJObject(),
                 new HistoryItem() //remove attachment
                 {
@@ -126,11 +117,11 @@ namespace Migration.Jira_Export.Tests
                     From = attachmentId,
                     FromString = attachmentName,
                     To = null,
-                    ToString = null,
+                    ToStringValue = null,
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -158,11 +149,11 @@ namespace Migration.Jira_Export.Tests
         public void When_a_parent_link_is_added_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string parentId = _fixture.Create<long>().ToString();
-            string parentKey = "ISSUE-xx";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var parentId = _fixture.Create<long>().ToString();
+            const string parentKey = "ISSUE-xx";
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }},
@@ -176,11 +167,11 @@ namespace Migration.Jira_Export.Tests
                     Field = "Parent",
                     FieldType = "jira",
                     To = parentId,
-                    ToString = parentKey
+                    ToStringValue = parentKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -208,13 +199,13 @@ namespace Migration.Jira_Export.Tests
         public void When_a_parent_link_is_changed_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string previousParentId = _fixture.Create<long>().ToString();
-            string previousParentKey = "ISSUE-xx";
-            string currentParentId = _fixture.Create<long>().ToString();
-            string currentParentKey = "ISSUE-yy";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var previousParentId = _fixture.Create<long>().ToString();
+            const string previousParentKey = "ISSUE-xx";
+            var currentParentId = _fixture.Create<long>().ToString();
+            const string currentParentKey = "ISSUE-yy";
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }},
@@ -230,11 +221,11 @@ namespace Migration.Jira_Export.Tests
                     From = previousParentId,
                     FromString = previousParentKey,
                     To = currentParentId,
-                    ToString = currentParentKey
+                    ToStringValue = currentParentKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -262,13 +253,13 @@ namespace Migration.Jira_Export.Tests
         public void When_a_parent_link_is_added_and_changed_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string previousParentId = _fixture.Create<long>().ToString();
-            string previousParentKey = "PreviousParentKey";
-            string currentParentId = _fixture.Create<long>().ToString();
-            string currentParentKey = "CurrentParentKey";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var previousParentId = _fixture.Create<long>().ToString();
+            const string previousParentKey = "PreviousParentKey";
+            var currentParentId = _fixture.Create<long>().ToString();
+            const string currentParentKey = "CurrentParentKey";
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }}
@@ -282,7 +273,7 @@ namespace Migration.Jira_Export.Tests
                     Field = "Parent",
                     FieldType = "jira",
                     To = previousParentId,
-                    ToString = previousParentKey
+                    ToStringValue = previousParentKey
                 }.ToJObject(),
                 new HistoryItem()
                 {
@@ -292,11 +283,11 @@ namespace Migration.Jira_Export.Tests
                     From = previousParentId,
                     FromString = previousParentKey,
                     To = currentParentId,
-                    ToString = currentParentKey
+                    ToStringValue = currentParentKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -325,11 +316,11 @@ namespace Migration.Jira_Export.Tests
         public void When_a_parent_link_was_removed_Then_the_result_should_be_succesful()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string previousParentId = _fixture.Create<long>().ToString();
-            string previousParentKey = "ISSUE-xx";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var previousParentId = _fixture.Create<long>().ToString();
+            const string previousParentKey = "ISSUE-xx";
 
             var fields = JObject.Parse($@"{{
                 'issuetype': {{ 'name': 'Story' }}
@@ -346,7 +337,7 @@ namespace Migration.Jira_Export.Tests
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -373,11 +364,11 @@ namespace Migration.Jira_Export.Tests
         public void When_an_epic_link_is_added_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string epicId = _fixture.Create<long>().ToString();
-            string epicKey = "EpicKey";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var epicId = _fixture.Create<long>().ToString();
+            const string epicKey = "EpicKey";
 
             var fields = JObject.Parse(@"{
                 'issuetype': {'name': 'Story'},
@@ -391,11 +382,11 @@ namespace Migration.Jira_Export.Tests
                     Field = "Epic Link",
                     FieldType = "custom",
                     To = epicId,
-                    ToString = epicKey
+                    ToStringValue = epicKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -423,13 +414,13 @@ namespace Migration.Jira_Export.Tests
         public void When_an_epic_link_is_changed_Then_it_should_have_the_previous_value_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string currentEpicId = _fixture.Create<long>().ToString();
-            string currentEpicKey = "EpicKey";
-            string previousEpicId = _fixture.Create<long>().ToString();
-            string previousEpicKey = "PreviousEpicKey";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var currentEpicId = _fixture.Create<long>().ToString();
+            const string currentEpicKey = "EpicKey";
+            var previousEpicId = _fixture.Create<long>().ToString();
+            const string previousEpicKey = "PreviousEpicKey";
 
             var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'EpicLinkField': 'EpicKey'}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
@@ -442,11 +433,11 @@ namespace Migration.Jira_Export.Tests
                     From = previousEpicId,
                     FromString = previousEpicKey,
                     To = currentEpicId,
-                    ToString = currentEpicKey
+                    ToStringValue = currentEpicKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -474,13 +465,13 @@ namespace Migration.Jira_Export.Tests
         public void When_an_epic_link_is__added_and_changed_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string currentEpicId = _fixture.Create<long>().ToString();
-            string currentEpicKey = "EpicKey";
-            string previousEpicId = _fixture.Create<long>().ToString();
-            string previousEpicKey = "PreviousEpicKey";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var currentEpicId = _fixture.Create<long>().ToString();
+            const string currentEpicKey = "EpicKey";
+            var previousEpicId = _fixture.Create<long>().ToString();
+            const string previousEpicKey = "PreviousEpicKey";
 
             var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'EpicLinkField': null}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
@@ -491,7 +482,7 @@ namespace Migration.Jira_Export.Tests
                     Field = "Epic Link",
                     FieldType = "custom",
                     To = previousEpicId,
-                    ToString = previousEpicKey
+                    ToStringValue = previousEpicKey
                 }.ToJObject(),
                 new HistoryItem()
                 {
@@ -501,11 +492,11 @@ namespace Migration.Jira_Export.Tests
                     From = previousEpicId,
                     FromString = previousEpicKey,
                     To = currentEpicId,
-                    ToString = currentEpicKey
+                    ToStringValue = currentEpicKey
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -534,11 +525,11 @@ namespace Migration.Jira_Export.Tests
         public void When_an_epic_link_was_removed_Then_the_result_should_be_successful()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string previousEpicId = _fixture.Create<long>().ToString();
-            string previousEpicKey = "PreviousEpicKey";
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var previousEpicId = _fixture.Create<long>().ToString();
+            const string previousEpicKey = "PreviousEpicKey";
 
             var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'EpicLinkField': 'EpicKey'}");
             var renderedFields = JObject.Parse("{ 'custom_field_name': 'SomeValue', 'description': 'RenderedDescription' }");
@@ -553,7 +544,7 @@ namespace Migration.Jira_Export.Tests
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -580,18 +571,18 @@ namespace Migration.Jira_Export.Tests
         public void When_a_custom_field_is_added_Then_no_customfield_is_added_to_the_revision_with_name_as_key()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string customFieldId = _fixture.Create<string>();
-            string customFieldName = _fixture.Create<string>();
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var customFieldId = _fixture.Create<string>();
+            var customFieldName = _fixture.Create<string>();
 
-            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'" + customFieldId + @"': {'name':'SomeValue', 'key':'" + customFieldId + "'}}");
+            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'"+customFieldId+@"': {'name':'SomeValue', 'key':'"+customFieldId+"'}}");
             var renderedFields = new JObject();
 
             var changelog = new List<JObject>();
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -623,15 +614,15 @@ namespace Migration.Jira_Export.Tests
         public void When_an_custom_field_is_changed_Then_it_should_have_the_previous_value_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string customFieldId = _fixture.Create<string>();
-            string customFieldName = _fixture.Create<string>();
-            string customFieldPreviousValue = _fixture.Create<string>();
-            string customFieldNewValue = _fixture.Create<string>();
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var customFieldId = _fixture.Create<string>();
+            var customFieldName = _fixture.Create<string>();
+            var customFieldPreviousValue = _fixture.Create<string>();
+            var customFieldNewValue = _fixture.Create<string>();
 
-            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'" + customFieldId + @"': '" + customFieldNewValue + @"', 'key':'" + issueKey + "'}");
+            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'"+customFieldId+@"': '"+customFieldNewValue+@"', 'key':'"+issueKey+"'}");
             var renderedFields = new JObject();
 
             var changelog = new List<JObject>()
@@ -643,11 +634,11 @@ namespace Migration.Jira_Export.Tests
                     From = customFieldPreviousValue,
                     FromString = customFieldPreviousValue,
                     To = customFieldNewValue,
-                    ToString = customFieldNewValue
+                    ToStringValue = customFieldNewValue
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -655,12 +646,12 @@ namespace Migration.Jira_Export.Tests
                 { "renderedFields", renderedFields }
             };
 
-            RemoteField r = new RemoteField
+            var r = new RemoteField
             {
                 id = customFieldId
             };
 
-            CustomField mockedCustomField = new CustomField(r);
+            var mockedCustomField = new CustomField(r);
 
             provider.DownloadIssue(default).ReturnsForAnyArgs(remoteIssue);
             provider.DownloadChangelog(default).ReturnsForAnyArgs(changelog);
@@ -686,14 +677,14 @@ namespace Migration.Jira_Export.Tests
         public void When_an_custom_field_is_added_and_changed_later_Then_it_should_not_be_in_the_initial_revision()
         {
             //Arrange
-            var provider = _fixture.Freeze<IJiraProvider>();
-            long issueId = _fixture.Create<long>();
-            string issueKey = _fixture.Create<string>();
-            string customFieldId = _fixture.Create<string>();
-            string customFieldName = _fixture.Create<string>();
-            string customFieldNewValue = _fixture.Create<string>();
+            var provider = Substitute.For<IJiraProvider>();
+            var issueId = _fixture.Create<long>();
+            var issueKey = _fixture.Create<string>();
+            var customFieldId = _fixture.Create<string>();
+            var customFieldName = _fixture.Create<string>();
+            var customFieldNewValue = _fixture.Create<string>();
 
-            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'" + customFieldId + @"': '" + customFieldNewValue + @"', 'key':'" + issueKey + "'}");
+            var fields = JObject.Parse(@"{'issuetype': {'name': 'Story'},'"+customFieldId+@"': '"+customFieldNewValue+@"', 'key':'"+issueKey+"'}");
             var renderedFields = new JObject();
 
             var changelog = new List<JObject>()
@@ -703,11 +694,11 @@ namespace Migration.Jira_Export.Tests
                     Field = customFieldName,
                     FieldType = "custom",
                     To = customFieldNewValue,
-                    ToString = customFieldNewValue
+                    ToStringValue = customFieldNewValue
                 }.ToJObject()
             };
 
-            JObject remoteIssue = new JObject
+            var remoteIssue = new JObject
             {
                 { "id", issueId },
                 { "key", issueKey },
@@ -715,12 +706,12 @@ namespace Migration.Jira_Export.Tests
                 { "renderedFields", renderedFields }
             };
 
-            RemoteField r = new RemoteField
+            var r = new RemoteField
             {
                 id = customFieldId
             };
 
-            CustomField mockedCustomField = new CustomField(r);
+            var mockedCustomField = new CustomField(r);
 
             provider.DownloadIssue(default).ReturnsForAnyArgs(remoteIssue);
             provider.DownloadChangelog(default).ReturnsForAnyArgs(changelog);
@@ -745,7 +736,7 @@ namespace Migration.Jira_Export.Tests
 
         private JiraSettings CreateJiraSettings()
         {
-            JiraSettings settings = new JiraSettings("userID", "pass", "token", "url", "project")
+            var settings = new JiraSettings("userID", "pass", "token", "url", "project")
             {
                 EpicLinkField = "EpicLinkField",
                 SprintField = "SprintField"

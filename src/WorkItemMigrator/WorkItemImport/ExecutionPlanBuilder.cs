@@ -22,9 +22,13 @@ namespace WorkItemImport
             // get the file attributes for file or directory
             FileAttributes attr = File.GetAttributes(path);
             if (attr.HasFlag(FileAttributes.Directory))
+            {
                 return new ExecutionPlan(BuildExecutionPlanFromDir(), _context);
+            }
             else
+            {
                 return new ExecutionPlan(BuildExecutionPlanFromFile(path), _context);
+            }
         }
 
         private IEnumerable<RevisionReference> BuildExecutionPlanFromDir()
@@ -49,7 +53,7 @@ namespace WorkItemImport
 
         private void EnsureIncreasingTimes(List<RevisionReference> actionPlan)
         {
-            for (int i = 1; i < actionPlan.Count; i++)
+            for (var i = 1; i < actionPlan.Count; i++)
             {
                 var prev = actionPlan[i - 1];
                 var current = actionPlan[i];
@@ -59,11 +63,15 @@ namespace WorkItemImport
                 {
                     var next = actionPlan[i + 1];
                     if (next.Time > prev.Time)
+                    {
                         nextTime = next.Time;
+                    }
                 }
 
                 if (prev.Time >= current.Time && prev.OriginId == current.OriginId)
+                {
                     current.Time = RevisionUtility.NextValidDeltaRev(prev.Time, nextTime);
+                }
             }
         }
 

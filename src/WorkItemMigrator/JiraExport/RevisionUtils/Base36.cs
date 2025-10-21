@@ -15,7 +15,10 @@ namespace JiraExport.RevisionUtils
         public static long Decode(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
+            {
                 throw new ArgumentException("Empty value.");
+            }
+
             value = value.ToUpper();
             var negative = false;
             if (value[0] == '-')
@@ -24,7 +27,9 @@ namespace JiraExport.RevisionUtils
                 value = value.Substring(1, value.Length - 1);
             }
             if (value.Any(c => !Digits.Contains(c)))
+            {
                 throw new ArgumentException("Invalid value: \"" + value + "\".");
+            }
 
             var decoded = 0L;
             for (var i = 0; i < value.Length; ++i)

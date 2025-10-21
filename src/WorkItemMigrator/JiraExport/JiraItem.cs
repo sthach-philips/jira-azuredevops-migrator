@@ -17,7 +17,9 @@ namespace JiraExport
         {
             var remoteIssue = jiraProvider.DownloadIssue(issueKey);
             if (remoteIssue == null)
+            {
                 return default(JiraItem);
+            }
 
             Logger.Log(LogLevel.Debug, $"Downloaded item.");
 
@@ -44,7 +46,9 @@ namespace JiraExport
             string reporter = GetAuthor(fields);
             var createdOn = fields.TryGetValue("created", out object crdate) ? (DateTime)crdate : default(DateTime);
             if (createdOn == DateTime.MinValue)
+            {
                 Logger.Log(LogLevel.Debug, "created key was not found, using DateTime default value");
+            }
 
             var changelog = jiraProvider.DownloadChangelog(issueKey).OrderByDescending(c => (long)c.SelectToken("$.id")).ToList();
             Logger.Log(LogLevel.Debug, $"Downloaded issue: {issueKey} changelog.");
@@ -163,7 +167,9 @@ namespace JiraExport
             listOfRevisions.Sort();
 
             foreach (var revAndI in listOfRevisions.Select((r, i) => (r, i)))
+            {
                 revAndI.Item1.Index = revAndI.Item2;
+            }
 
             return listOfRevisions;
         }
@@ -174,9 +180,13 @@ namespace JiraExport
 
             // undo field change
             if (string.IsNullOrWhiteSpace(item.From))
+            {
                 fields.Remove(customFieldName);
+            }
             else
+            {
                 fields[customFieldName] = item.FromString;
+            }
         }
 
         private static void HandleFieldChange(JiraChangeItem item, IJiraProvider jiraProvider, Dictionary<string, object> fieldChanges, Dictionary<string, object> fields)
@@ -187,16 +197,22 @@ namespace JiraExport
 
             // undo field change
             if (string.IsNullOrEmpty(from))
+            {
                 fields.Remove(fieldref);
+            }
             else
+            {
                 fields[fieldref] = from;
+            }
         }
 
         private static void HandleLinkChange(JiraChangeItem item, string issueKey, IJiraProvider jiraProvider, List<RevisionAction<JiraLink>> linkChanges, List<JiraLink> links)
         {
             var linkChange = TransformLinkChange(item, issueKey, jiraProvider);
             if (linkChange == null)
+            {
                 return;
+            }
 
             linkChanges.Add(linkChange);
             UndoLinkChange(linkChange, links);
@@ -206,7 +222,9 @@ namespace JiraExport
         {
             var attachmentChange = TransformAttachmentChange(item);
             if (attachmentChange == null)
+            {
                 return;
+            }
 
             if (UndoAttachmentChange(attachmentChange, attachments))
             {
@@ -270,9 +288,14 @@ namespace JiraExport
         {
             var result = attachments.Remove(attachmentChange.Value);
             if (result)
+            {
                 Logger.Log(LogLevel.Debug, $"Undone attachment '{attachmentChange.ToString()}'.");
+            }
             else
+            {
                 Logger.Log(LogLevel.Debug, $"No attachment to undo for '{attachmentChange.ToString()}'.");
+            }
+
             return result;
         }
 
@@ -337,17 +360,26 @@ namespace JiraExport
         {
             var customField = jira.GetCustomField(fieldName);
             if (customField != null)
+            {
                 return customField.Id;
-            else return null;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         protected static string GetCustomFieldName(string fieldId, IJiraProvider jira)
         {
             var customField = jira.GetCustomField(fieldId);
             if (customField != null)
+            {
                 return customField.Name;
-            else return null;
-
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static void UndoLinkChange(RevisionAction<JiraLink> linkChange, List<JiraLink> links)
@@ -359,9 +391,13 @@ namespace JiraExport
             }
 
             if (links.Remove(linkChange.Value))
+            {
                 Logger.Log(LogLevel.Debug, $"Undone link '{linkChange.ToString()}'.");
+            }
             else
+            {
                 Logger.Log(LogLevel.Debug, $"No link to undo for '{linkChange.ToString()}'");
+            }
         }
         private static RevisionAction<JiraLink> TransformLinkChange(JiraChangeItem item, string sourceItemKey, IJiraProvider jira)
         {
@@ -417,7 +453,9 @@ namespace JiraExport
             {
                 var targetIssueKey = issueLink.ExValue<string>("$.outwardIssue.key");
                 if (string.IsNullOrWhiteSpace(targetIssueKey))
+                {
                     continue;
+                }
 
                 var type = issueLink.ExValue<string>("$.type.name");
 
@@ -561,7 +599,9 @@ namespace JiraExport
         private static string GetAuthorIdentityOrDefault(string author)
         {
             if (string.IsNullOrEmpty(author))
+            {
                 return default(string);
+            }
 
             return author;
 
@@ -592,9 +632,13 @@ namespace JiraExport
             get
             {
                 if (!string.IsNullOrEmpty(_provider.GetSettings().EpicLinkField))
+                {
                     return RemoteIssue.ExValue<string>($"$.fields.{_provider.GetSettings().EpicLinkField}");
+                }
                 else
+                {
                     return null;
+                }
             }
         }
         public string Parent { get { return RemoteIssue.ExValue<string>("$.fields.parent.key"); } }
