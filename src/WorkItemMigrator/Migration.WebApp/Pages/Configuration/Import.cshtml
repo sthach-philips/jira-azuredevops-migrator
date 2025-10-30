@@ -1,0 +1,75 @@
+@page
+@model ImportModel
+@{
+    ViewData["Title"] = "Import Configuration";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>Import Configuration</h2>
+        <p class="text-muted">Import existing JSON configuration files into the database.</p>
+
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert @(Model.ImportResult?.Success == true ? "alert-success" : "alert-danger")">
+                @Model.Message
+                @if (Model.ImportResult?.Errors.Any() == true)
+                {
+                    <ul class="mt-2 mb-0">
+                        @foreach (var error in Model.ImportResult.Errors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
+
+        <form method="post" enctype="multipart/form-data">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="OrganizationId" class="form-label">Organization</label>
+                        <select class="form-select" asp-for="OrganizationId" asp-items="Model.OrganizationOptions" required>
+                            <option value="">Select Organization</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ConfigFile" class="form-label">Configuration File</label>
+                        <input type="file" class="form-control" asp-for="ConfigFile" accept=".json" required>
+                        <div class="form-text">Select a JSON configuration file to import.</div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" asp-for="ReplaceExisting" id="ReplaceExisting">
+                        <label class="form-check-label" for="ReplaceExisting">
+                            Replace existing default mappings
+                        </label>
+                        <div class="form-text">If checked, existing default field mappings will be replaced.</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Import Configuration</button>
+                    <a href="/Configuration/Organizations" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Import Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="text-success">✓</i> JSON files from existing migrations</li>
+                    <li><i class="text-success">✓</i> Field mappings will be imported as defaults</li>
+                    <li><i class="text-success">✓</i> Mapper types will be preserved</li>
+                    <li><i class="text-warning">⚠</i> Existing mappings may be replaced</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

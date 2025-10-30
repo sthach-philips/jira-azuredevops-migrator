@@ -1,0 +1,216 @@
+@page "/Export/Details/{id:int}"
+@model ExportDetailsModel
+@{
+    ViewData["Title"] = $"Export Run {Model.ExportRun?.Id}";
+}
+
+@if (Model.ExportRun != null)
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Export Run #@Model.ExportRun.Id</h2>
+        <div>
+            @if (Model.ExportRun.Status == Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running)
+            {
+                <button class="btn btn-outline-danger" onclick="cancelExport(@Model.ExportRun.Id)">Cancel Export</button>
+            }
+            <a href="/Export" class="btn btn-secondary">Back to Exports</a>
+        </div>
+    </div>
+
+    <!-- Export Status Card -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h6>Status</h6>
+                            <span class="badge @GetStatusBadgeClass(Model.ExportRun.Status) fs-6">@Model.ExportRun.Status</span>
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Project</h6>
+                            <p class="mb-0">@Model.ExportRun.JiraProjectKey</p>
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Started</h6>
+                            <p class="mb-0">@Model.ExportRun.StartedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Duration</h6>
+                            <p class="mb-0">
+                                @if (Model.ExportRun.CompletedAt.HasValue)
+                                {
+                                    @((Model.ExportRun.CompletedAt.Value - Model.ExportRun.StartedAt).ToString(@"hh\:mm\:ss"))
+                                }
+                                else
+                                {
+                                    @((DateTime.UtcNow - Model.ExportRun.StartedAt).ToString(@"hh\:mm\:ss"))
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Progress</h6>
+                            <p class="mb-0">@Model.ExportRun.ItemsExported / @Model.ExportRun.TotalItemsFound</p>
+                        </div>
+                        <div class="col-md-2">
+                            <h6>User</h6>
+                            <p class="mb-0">@Model.ExportRun.User?.Username</p>
+                        </div>
+                    </div>
+
+                    @if (Model.ExportRun.Status == Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running)
+                    {
+                        <div class="mt-3">
+                            <div class="progress">
+                                <div id="export-progress" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: @GetProgressPercentage()%" 
+                                     aria-valuenow="@GetProgressPercentage()" aria-valuemin="0" aria-valuemax="100">
+                                    @GetProgressPercentage()%
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ExportRun.ErrorDetails))
+                    {
+                        <div class="mt-3">
+                            <div class="alert alert-danger">
+                                <strong>Error:</strong> @Model.ExportRun.ErrorDetails
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JQL Query -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>JQL Query</h5>
+                </div>
+                <div class="card-body">
+                    <code>@Model.ExportRun.JiraQuery</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exported Items -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Exported Items (@Model.ExportedItems.Count)</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.ExportedItems.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Jira Key</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Exported At</th>
+                                        <th>Revisions</th>
+                                        <th>Hash</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ExportedItems.Take(100))
+                                    {
+                                        <tr>
+                                            <td>@item.JiraKey</td>
+                                            <td>@item.ItemType</td>
+                                            <td>
+                                                <span class="badge @GetItemStatusBadgeClass(item.Status)">@item.Status</span>
+                                            </td>
+                                            <td>@item.ExportedAt.ToString("HH:mm:ss")</td>
+                                            <td>@item.RevisionCount</td>
+                                            <td><small class="text-muted">@item.ContentHash[..8]...</small></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if (Model.ExportedItems.Count > 100)
+                            {
+                                <p class="text-muted">Showing first 100 items of @Model.ExportedItems.Count total.</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No items exported yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        Export run not found.
+    </div>
+}
+
+@functions {
+    private string GetStatusBadgeClass(Migration.WebApp.Infrastructure.Data.Entities.ExportStatus status)
+    {
+        return status switch
+        {
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running => "bg-primary",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Completed => "bg-success",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Failed => "bg-danger",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Cancelled => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetItemStatusBadgeClass(Migration.WebApp.Infrastructure.Data.Entities.ExportItemStatus status)
+    {
+        return status switch
+        {
+            Migration.WebApp.Infrastructure.Data.Entities.ExportItemStatus.Exported => "bg-success",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportItemStatus.Failed => "bg-danger",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportItemStatus.Skipped => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+
+    private int GetProgressPercentage()
+    {
+        if (Model.ExportRun?.TotalItemsFound == 0) return 0;
+        return (Model.ExportRun?.ItemsExported * 100 / Model.ExportRun?.TotalItemsFound) ?? 0;
+    }
+}
+
+@section Scripts {
+    <script>
+        // Join SignalR group for this export
+        connection.invoke("JoinGroup", "export-@Model.ExportRun?.Id");
+
+        function cancelExport(exportId) {
+            if (confirm('Cancel this export run?')) {
+                fetch(`/Export/Cancel/${exportId}`, { method: 'POST' })
+                    .then(() => location.reload());
+            }
+        }
+
+        // Auto-refresh for running exports
+        @if (Model.ExportRun?.Status == Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running)
+        {
+            <text>
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    location.reload();
+                }
+            }, 5000);
+            </text>
+        }
+    </script>
+}

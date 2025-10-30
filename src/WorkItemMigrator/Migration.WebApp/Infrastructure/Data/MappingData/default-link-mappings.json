@@ -1,0 +1,14 @@
+{
+  "linkMappings": [
+    { "jiraLink": "Child", "azureLink": "System.LinkTypes.Hierarchy-Forward" },
+    { "jiraLink": "clones", "azureLink": "System.LinkTypes.Duplicate-Forward" },
+    { "jiraLink": "duplicates", "azureLink": "System.LinkTypes.Duplicate-Forward" },
+    { "jiraLink": "Epic", "azureLink": "System.LinkTypes.Hierarchy-Reverse" },
+	{ "Initiative": "Initiative", "azureLink": "System.LinkTypes.Hierarchy-Reverse" },
+	{ "is cloned by": "is cloned by", "azureLink": "System.LinkTypes.Hierarchy-Reverse" },
+	{ "is duplicate by": "is duplicate by", "azureLink": "System.LinkTypes.Hierarchy-Reverse" },
+    { "jiraLink": "Parent", "azureLink": "System.LinkTypes.Hierarchy-Reverse" },
+	{ "jiraLink": "relates to", "azureLink": "System.LinkTypes.Related" },	
+    { "jiraLink": "Relates", "azureLink": "System.LinkTypes.Related" }
+  ]
+}

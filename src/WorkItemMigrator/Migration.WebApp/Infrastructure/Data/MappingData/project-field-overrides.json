@@ -1,0 +1,118 @@
+{
+  "projectFieldOverrides": [
+    {
+      "jiraProjectKey": "RS",
+      "jiraProject": "Advanced Research & Data Science",
+      "jiraIssueType": "Sub-task",
+      "jiraFieldId": "assignee",
+      "jiraFieldName": "Assignee",
+      "overrideMigrate": false,
+      "reason": "Sub-tasks not migrated for RS"
+    },
+    {
+      "jiraProjectKey": "RS",
+      "jiraProject": "Advanced Research & Data Science",
+      "jiraIssueType": "Initiative",
+      "jiraFieldId": "assignee",
+      "jiraFieldName": "Assignee",
+      "overrideMigrate": false,
+      "reason": "Initiatives not migrated for RS"
+    },
+    {
+      "jiraProjectKey": "BSD",
+      "jiraProject": "Business Systems DevOps",
+      "jiraIssueType": "Bug",
+      "jiraFieldId": "reporter",
+      "jiraFieldName": "Reporter",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "System.CreatedBy",
+      "overrideDisplayName": "Found By",
+      "reason": "Bug-specific display name"
+    },
+    {
+      "jiraProjectKey": "MID",
+      "jiraProject": "Middleware - Distribution",
+      "jiraIssueType": "Bug",
+      "jiraFieldId": "reporter",
+      "jiraFieldName": "Reporter",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "System.CreatedBy",
+      "overrideDisplayName": "Found By",
+      "reason": "Bug-specific display name"
+    },
+    {
+      "jiraProjectKey": "MID",
+      "jiraProject": "Middleware - JAL",
+      "jiraIssueType": "Bug",
+      "jiraFieldId": "reporter",
+      "jiraFieldName": "Reporter",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "System.CreatedBy",
+      "overrideDisplayName": "Found By",
+      "reason": "Bug-specific display name"
+    },
+    {
+      "jiraProjectKey": "BSD",
+      "jiraProject": "Business Systems DevOps",
+      "jiraIssueType": "Story",
+      "jiraFieldId": "customfield_10019",
+      "jiraFieldName": "Story Points",
+      "overrideMigrate": false,
+      "reason": "Story points disabled for BSD Stories"
+    },
+    {
+      "jiraProjectKey": "MID",
+      "jiraProject": "Middleware - Distribution",
+      "jiraIssueType": "Story",
+      "jiraFieldId": "customfield_10019",
+      "jiraFieldName": "Story Points",
+      "overrideMigrate": false,
+      "reason": "Story points disabled for MID Stories"
+    },
+    {
+      "jiraProjectKey": "MID",
+      "jiraProject": "Middleware - JAL",
+      "jiraIssueType": "Story",
+      "jiraFieldId": "customfield_10019",
+      "jiraFieldName": "Story Points",
+      "overrideMigrate": false,
+      "reason": "Story points disabled for JAL Stories"
+    },
+    {
+      "jiraProjectKey": "RS",
+      "jiraProject": "Advanced Research & Data Science",
+      "jiraIssueType": "Story",
+      "jiraFieldId": "customfield_10348",
+      "jiraFieldName": "Change Type",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "F545D8E9-6A82-424A-8A2D-2D90DE17C359",
+      "overrideConfigMappingType": "MapToComments",
+      "overrideDisplayName": "History - Change Type",
+      "reason": "RS-specific field"
+    },
+    {
+      "jiraProjectKey": "RS",
+      "jiraProject": "Advanced Research & Data Science",
+      "jiraIssueType": "Task",
+      "jiraFieldId": "customfield_10348",
+      "jiraFieldName": "Change Type",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "E25EB5D5-9F12-4AD9-BEB3-2D3FC825833C",
+      "overrideConfigMappingType": "MapToComments",
+      "overrideDisplayName": "History - Change Type",
+      "reason": "RS-specific field"
+    },
+    {
+      "jiraProjectKey": "RS",
+      "jiraProject": "Advanced Research & Data Science",
+      "jiraIssueType": "Bug",
+      "jiraFieldId": "customfield_10348",
+      "jiraFieldName": "Change Type",
+      "overrideMigrate": true,
+      "overrideAdoReferenceName": "9E04712B-06AB-45EA-9119-CDFF929F0E0F",
+      "overrideConfigMappingType": "MapToComments",
+      "overrideDisplayName": "History - Change Type",
+      "reason": "RS-specific field"
+    }
+  ]
+}

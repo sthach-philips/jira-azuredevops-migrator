@@ -1,0 +1,7 @@
+{
+  "jqlNormalization": {
+    "caseInsensitiveKeywords": true,
+    "normalizeWhitespace": true,
+    "standardizeQuotes": true
+  }
+}

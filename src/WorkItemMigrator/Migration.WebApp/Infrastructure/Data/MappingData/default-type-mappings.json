@@ -1,0 +1,13 @@
+{
+  "typeMappings": 
+  [
+    { "jiraType": "Bug", "azureType": "Bug" },
+    { "jiraType": "Epic", "azureType": "Feature" },
+    { "jiraType": "Initiative", "azureType": "Epic" },
+	{ "jiraType": "Spike", "azureType": "Spike" },
+    { "jiraType": "Story", "azureType": "User Story" },
+    { "jiraType": "Task", "azureType": "Task" },
+    { "jiraType": "Sub-Task", "azureType": "Task" },
+	{ "jiraType": "sub-task", "azureType": "Task" }
+  ]
+}

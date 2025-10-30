@@ -1,0 +1,124 @@
+{
+  "tShirtSizeMappings": [
+    { "jiraValue": "XS", "azureValue": "1" },
+    { "jiraValue": "S", "azureValue": "3" },
+    { "jiraValue": "M", "azureValue": "5" },
+    { "jiraValue": "L", "azureValue": "8" },
+    { "jiraValue": "XL", "azureValue": "13" }
+  ],
+  "severityMappings": [
+    { "jiraValue": "Blocker", "azureValue": "Critical" },
+    { "jiraValue": "Critical", "azureValue": "High" },
+    { "jiraValue": "Major", "azureValue": "Medium" },
+    { "jiraValue": "Minor", "azureValue": "Low" },
+    { "jiraValue": "Trivial", "azureValue": "Very Low" },
+    { "jiraValue": "None", "azureValue": "None" }
+  ],
+  "escalationLevelMappings": [
+    { "jiraValue": "High", "azureValue": "Escalated" },
+    { "jiraValue": "Medium", "azureValue": "Escalated" },
+    { "jiraValue": "Low", "azureValue": "Not Escalated" },
+    { "jiraValue": "None", "azureValue": "Not Escalated" }
+  ],
+  "priorityMappings": [
+    { "jiraValue": "Blocker", "azureValue": "1" },
+    { "jiraValue": "Critical", "azureValue": "1" },
+    { "jiraValue": "Highest", "azureValue": "1" },
+    { "jiraValue": "High", "azureValue": "2" },
+    { "jiraValue": "Major", "azureValue": "2" },
+    { "jiraValue": "Medium", "azureValue": "3" },
+    { "jiraValue": "Low", "azureValue": "4" },
+    { "jiraValue": "Lowest", "azureValue": "4" },
+    { "jiraValue": "Minor", "azureValue": "4" },
+    { "jiraValue": "Trivial", "azureValue": "4" }
+  ],
+  "statusMappings": [
+    { "jiraValue": "New", "azureValue": "New" },
+    { "jiraValue": "OPEN", "azureValue": "New" },
+    { "jiraValue": "To Do", "azureValue": "New" },
+    { "jiraValue": "Ready", "azureValue": "New" },
+    { "jiraValue": "Ready for Dev", "azureValue": "New" },
+    { "jiraValue": "Groomed", "azureValue": "New" },
+    { "jiraValue": "Scoped", "azureValue": "New" },
+    { "jiraValue": "In Progress", "azureValue": "Active" },
+    { "jiraValue": "In_Progress", "azureValue": "Active" },
+    { "jiraValue": "Ready for UAT Testing", "azureValue": "Active" },
+    { "jiraValue": "Done", "azureValue": "Closed" },
+    { "jiraValue": "Removed", "azureValue": "Removed" }
+  ],
+  "fieldMappingsByJiraField": 
+  {
+    "customfield_10287": {
+      "jiraFieldName": "T-Shirt Size",
+      "azureFieldReferenceName": "Microsoft.VSTS.Scheduling.Size",
+      "mapperType": "MapValue",
+      "valueMappings": [
+        { "jiraValue": "XS", "azureValue": "1" },
+        { "jiraValue": "S", "azureValue": "3" },
+        { "jiraValue": "M", "azureValue": "5" },
+        { "jiraValue": "L", "azureValue": "8" },
+        { "jiraValue": "XL", "azureValue": "13" }
+      ]
+    },
+    "customfield_10338": {
+      "jiraFieldName": "Severity",
+      "azureFieldReferenceName": "Microsoft.VSTS.Common.Severity",
+      "mapperType": "MapValue",
+      "valueMappings": [
+        { "jiraValue": "Blocker", "azureValue": "Critical" },
+        { "jiraValue": "Critical", "azureValue": "High" },
+        { "jiraValue": "Major", "azureValue": "Medium" },
+        { "jiraValue": "Minor", "azureValue": "Low" },
+        { "jiraValue": "Trivial", "azureValue": "Very Low" },
+        { "jiraValue": "None", "azureValue": "None" }
+      ]
+    },
+    "customfield_10560": {
+      "jiraFieldName": "Escalation Level",
+      "azureFieldReferenceName": "Microsoft.VSTS.CMMI.Escalate",
+      "mapperType": "MapValue",
+      "valueMappings": [
+        { "jiraValue": "High", "azureValue": "Escalated" },
+        { "jiraValue": "Medium", "azureValue": "Escalated" },
+        { "jiraValue": "Low", "azureValue": "Not Escalated" },
+        { "jiraValue": "None", "azureValue": "Not Escalated" }
+      ]
+    },
+    "priority": {
+      "jiraFieldName": "Priority",
+      "azureFieldReferenceName": "Microsoft.VSTS.Common.Priority",
+      "mapperType": "MapValue",
+      "valueMappings": [
+        { "jiraValue": "Blocker", "azureValue": "1" },
+        { "jiraValue": "Critical", "azureValue": "1" },
+        { "jiraValue": "Highest", "azureValue": "1" },
+        { "jiraValue": "High", "azureValue": "2" },
+        { "jiraValue": "Major", "azureValue": "2" },
+        { "jiraValue": "Medium", "azureValue": "3" },
+        { "jiraValue": "Low", "azureValue": "4" },
+        { "jiraValue": "Lowest", "azureValue": "4" },
+        { "jiraValue": "Minor", "azureValue": "4" },
+        { "jiraValue": "Trivial", "azureValue": "4" }
+      ]
+    },
+    "status": {
+      "jiraFieldName": "Status",
+      "azureFieldReferenceName": "System.State",
+      "mapperType": "MapValue",
+      "valueMappings": [
+        { "jiraValue": "New", "azureValue": "New" },
+        { "jiraValue": "OPEN", "azureValue": "New" },
+        { "jiraValue": "To Do", "azureValue": "New" },
+        { "jiraValue": "Ready", "azureValue": "New" },
+        { "jiraValue": "Ready for Dev", "azureValue": "New" },
+        { "jiraValue": "Groomed", "azureValue": "New" },
+        { "jiraValue": "Scoped", "azureValue": "New" },
+        { "jiraValue": "In Progress", "azureValue": "Active" },
+        { "jiraValue": "In_Progress", "azureValue": "Active" },
+        { "jiraValue": "Ready for UAT Testing", "azureValue": "Active" },
+        { "jiraValue": "Done", "azureValue": "Closed" },
+        { "jiraValue": "Removed", "azureValue": "Removed" }
+      ]
+    }
+  }
+}

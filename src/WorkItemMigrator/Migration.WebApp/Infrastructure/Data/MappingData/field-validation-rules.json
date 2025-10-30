@@ -1,0 +1,30 @@
+{
+  "fieldValidationRules": {
+    "skipIfMissing": true,
+    "skipIfNull": true,
+    "skipIfEmpty": true,
+    "logSkippedFields": true,
+    "validateFieldExistence": true,
+    "requiredFields": [
+      "summary",
+      "issuetype",
+      "project",
+      "reporter"
+    ],
+    "conditionalFields": {
+      "customfield_10348": {
+        "condition": "projectKey == 'RS'",
+        "description": "Change Type only exists in RS project"
+      },
+      "customfield_10222": {
+        "condition": "projectKey in ['BSD', 'MID', 'SFIN']",
+        "description": "Business Systems Team field project-specific"
+      }
+    },
+    "fieldExistenceValidation": {
+      "validateBeforeMapping": true,
+      "cacheFieldSchema": true,
+      "refreshSchemaInterval": "24h"
+    }
+  }
+}

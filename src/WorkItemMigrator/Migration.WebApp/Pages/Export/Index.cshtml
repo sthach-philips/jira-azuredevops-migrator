@@ -1,0 +1,205 @@
+@page
+@model ExportIndexModel
+@{
+    ViewData["Title"] = "Export Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Export Management</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#startExportModal">
+        Start New Export
+    </button>
+</div>
+
+<!-- Export Plan Preview -->
+@if (Model.ExportPlan != null)
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Export Plan Preview</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h4 class="text-success">@Model.ExportPlan.ItemsToExport.Count</h4>
+                        <small>Items to Export</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h4 class="text-muted">@Model.ExportPlan.ItemsToSkip.Count</h4>
+                        <small>Items to Skip</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h4 class="text-info">@Model.ExportPlan.TotalEstimatedTime.ToString(@"hh\:mm\:ss")</h4>
+                        <small>Estimated Time</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <button class="btn btn-success" onclick="confirmExport()">Confirm Export</button>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.ExportPlan.ReasonBreakdown.Any())
+            {
+                <div class="mt-3">
+                    <h6>Export Reasons:</h6>
+                    @foreach (var reason in Model.ExportPlan.ReasonBreakdown)
+                    {
+                        <span class="badge bg-secondary me-2">@reason.Key: @reason.Value</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Recent Export Runs -->
+<div class="card">
+    <div class="card-header">
+        <h5>Recent Export Runs</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Started</th>
+                        <th>Status</th>
+                        <th>Items</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var run in Model.RecentExportRuns)
+                    {
+                        <tr>
+                            <td>@run.JiraProjectKey</td>
+                            <td>@run.StartedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(run.Status)">@run.Status</span>
+                            </td>
+                            <td>@run.ItemsExported / @run.TotalItemsFound</td>
+                            <td>
+                                @if (run.CompletedAt.HasValue)
+                                {
+                                    @((run.CompletedAt.Value - run.StartedAt).ToString(@"hh\:mm\:ss"))
+                                }
+                                else if (run.Status == Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running)
+                                {
+                                    <span class="text-muted">Running...</span>
+                                }
+                            </td>
+                            <td>
+                                @if (run.Status == Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running)
+                                {
+                                    <button class="btn btn-sm btn-outline-danger" onclick="cancelExport(@run.Id)">Cancel</button>
+                                }
+                                <a href="/Export/Details/@run.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Start Export Modal -->
+<div class="modal fade" id="startExportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="CreatePlan">
+                <div class="modal-header">
+                    <h5 class="modal-title">Start New Export</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="OrganizationId" class="form-label">Organization</label>
+                                <select class="form-select" asp-for="ExportRequest.OrganizationId" asp-items="Model.OrganizationOptions" required>
+                                    <option value="">Select Organization</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="JiraProjectKey" class="form-label">Jira Project Key</label>
+                                <input type="text" class="form-control" asp-for="ExportRequest.JiraProjectKey" placeholder="SCRUM" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="JiraQuery" class="form-label">JQL Query</label>
+                        <textarea class="form-control" asp-for="ExportRequest.JiraQuery" rows="3" 
+                                  placeholder="project = SCRUM AND status != Done" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Strategy" class="form-label">Deduplication Strategy</label>
+                                <select class="form-select" asp-for="ExportRequest.Strategy">
+                                    <option value="Balanced">Balanced (Recommended)</option>
+                                    <option value="Conservative">Conservative (Re-export on doubt)</option>
+                                    <option value="Aggressive">Aggressive (Skip when possible)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 form-check mt-4">
+                                <input type="checkbox" class="form-check-input" asp-for="ExportRequest.ForceReExport">
+                                <label class="form-check-label" for="ForceReExport">
+                                    Force re-export all items
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Export Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(Migration.WebApp.Infrastructure.Data.Entities.ExportStatus status)
+    {
+        return status switch
+        {
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Running => "bg-primary",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Completed => "bg-success",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Failed => "bg-danger",
+            Migration.WebApp.Infrastructure.Data.Entities.ExportStatus.Cancelled => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function confirmExport() {
+            if (confirm('Start the export with the current plan?')) {
+                document.getElementById('confirmExportForm').submit();
+            }
+        }
+
+        function cancelExport(exportId) {
+            if (confirm('Cancel this export run?')) {
+                fetch(`/Export/Cancel/${exportId}`, { method: 'POST' })
+                    .then(() => location.reload());
+            }
+        }
+    </script>
+}

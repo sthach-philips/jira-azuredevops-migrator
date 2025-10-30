@@ -1,0 +1,42 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>Jira to Azure DevOps Migration Tool</h1>
+        <p class="lead">Web-based migration tool with configuration management and job scheduling.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Configuration</h5>
+                <p class="card-text">Manage organizations, teams, and field mappings.</p>
+                <a href="/Configuration/Organizations" class="btn btn-primary">Manage Config</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Export</h5>
+                <p class="card-text">Export Jira items with smart deduplication.</p>
+                <a href="/Export" class="btn btn-success">Start Export</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Import</h5>
+                <p class="card-text">Import to Azure DevOps with job tracking.</p>
+                <a href="/Import" class="btn btn-info">Start Import</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourPassword123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  migration-webapp:
+    build: .
+    ports:
+      - "5000:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MigrationDb;User Id=sa;Password=YourPassword123!;TrustServerCertificate=true
+      - AttachmentStorage__StorageType=Local
+      - AttachmentStorage__LocalPath=/app/attachments
+    volumes:
+      - attachment_data:/app/attachments
+    depends_on:
+      - sqlserver
+
+volumes:
+  sqlserver_data:
+  attachment_data:

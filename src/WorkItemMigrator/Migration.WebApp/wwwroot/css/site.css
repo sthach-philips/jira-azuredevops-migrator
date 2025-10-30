@@ -1,0 +1,45 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.config-inheritance {
+  border-left: 4px solid #007bff;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.config-override {
+  border-left: 4px solid #ffc107;
+}
+
+.config-default {
+  border-left: 4px solid #28a745;
+}
+
+.field-mapping-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.field-mapping-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

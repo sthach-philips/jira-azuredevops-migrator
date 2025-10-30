@@ -1,0 +1,89 @@
+@page
+@model FieldMappingsModel
+@{
+    ViewData["Title"] = "Field Mappings";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Field Mappings</h2>
+    <div>
+        <select class="form-select d-inline-block w-auto me-2" asp-for="SelectedOrganizationId" asp-items="Model.OrganizationOptions" onchange="this.form.submit()">
+            <option value="">Select Organization</option>
+        </select>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createMappingModal">
+            Add Mapping
+        </button>
+    </div>
+</div>
+
+@if (Model.SelectedOrganizationId.HasValue)
+{
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link @(Model.ViewLevel == "Default" ? "active" : "")" 
+                               href="?orgId=@Model.SelectedOrganizationId&level=Default">Default Mappings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(Model.ViewLevel == "Team" ? "active" : "")" 
+                               href="?orgId=@Model.SelectedOrganizationId&level=Team">Team Overrides</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(Model.ViewLevel == "Product" ? "active" : "")" 
+                               href="?orgId=@Model.SelectedOrganizationId&level=Product">Product Overrides</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Jira Field</th>
+                                    <th>Azure Field</th>
+                                    <th>Mapper Type</th>
+                                    <th>Work Item Type</th>
+                                    <th>Will Migrate</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var mapping in Model.FieldMappings)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@mapping.JiraFieldDisplayName</strong><br>
+                                            <small class="text-muted">@mapping.JiraFieldId</small>
+                                        </td>
+                                        <td>
+                                            <strong>@mapping.AzureFieldDisplayName</strong><br>
+                                            <small class="text-muted">@mapping.AzureFieldReferenceName</small>
+                                        </td>
+                                        <td>@mapping.AzureDevOpsMigratorMapperType</td>
+                                        <td>@mapping.ForWorkItemType</td>
+                                        <td>
+                                            <span class="badge @(mapping.WillMigrate ? "bg-success" : "bg-secondary")">
+                                                @(mapping.WillMigrate ? "Yes" : "No")
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">Edit</button>
+                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<form method="get" style="display: none;">
+    <input type="hidden" asp-for="SelectedOrganizationId" />
+</form>

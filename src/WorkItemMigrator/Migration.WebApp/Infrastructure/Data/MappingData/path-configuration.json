@@ -1,0 +1,72 @@
+{
+  "projects": [
+    {
+      "projectKey": "BSD",
+      "projectAreaPath": "Business Systems DevOps",
+      "baseAreaPath": "Business Systems DevOps",
+      "baseIterationPath": "BSD/2025",
+      "sourceProject": "BSD"
+    },
+    {
+      "projectKey": "MID",
+      "projectAreaPath": "Distribution",
+      "baseAreaPath": "Distribution",
+      "baseIterationPath": "Distribution/2025",
+      "sourceProject": "MID"
+    },
+    {
+      "projectKey": "MID",
+      "projectAreaPath": "JAL",
+      "baseAreaPath": "JAL",
+      "baseIterationPath": "JAL/2025",
+      "sourceProject": "MID"
+    },
+    {
+      "projectKey": "MID",
+      "projectAreaPath": "VAYU",
+      "baseAreaPath": "VAYU",
+      "baseIterationPath": "VAYU/2025",
+      "sourceProject": "MID"
+    },
+    {
+      "projectKey": "RS",
+      "projectAreaPath": "Research",
+      "baseAreaPath": "Research",
+      "baseIterationPath": "Research/2025",
+      "downloadOptions": 7,
+      "query": "project = RS AND type = Story AND \"Change Type[Select List (cascading)]\" = \"Technical Debt\" ORDER BY created DESC",
+      "sourceProject": "RS"
+    },
+    {
+      "projectKey": "SAL",
+      "projectAreaPath": "Salesforce",
+      "baseAreaPath": "Salesforce",
+      "baseIterationPath": "Salesforce/2025",
+      "sourceProject": "SAL"
+    },
+    {
+      "projectKey": "SFIN",
+      "projectAreaPath": "Rev Cycle Management",
+      "baseAreaPath": "Rev Cycle Management",
+      "baseIterationPath": "RCM/2025",
+      "sourceProject": "SFIN"
+    }
+  ],
+  "defaultSettings": {
+    "attachmentFolder": "attachments",
+    "batchSize": 100,
+    "downloadOptions": 0,
+    "epicLinkField": "Epic Link",
+    "ignoreEmptyRevisions": false,
+    "ignoreFailedLinks": true,
+    "includeJiraCssStyles": false,
+    "includeLinkComments": false,
+    "logLevel": "Info",
+    "processTemplate": "Agile",
+    "sleepTimeBetweenRevisionImportMilliseconds": 0,
+    "sprintField": "Sprint",
+    "suppressNotifications": false,
+    "targetProject": "ECG Solutions",
+    "usingJiraCloud": true
+  }
+}
